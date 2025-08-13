@@ -319,6 +319,8 @@ class ProductosController extends GetxController {
         puntos: json['puntos'] ?? '',
         ordenCompra: json['orden_compra'] ?? '',            
         observaciones: json['observaciones'] ?? '',
+        totalPiezasPorPalletSurtidas: json['total_piezas_por_pallet_surtidas'] ?? 0,
+
         tipo: json['tipo'] != null && json['tipo'] is Map<String, dynamic>
             ? TipoEntity(
                 id: json['tipo']['id'] ?? 0,

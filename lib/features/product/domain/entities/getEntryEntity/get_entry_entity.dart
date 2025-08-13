@@ -48,7 +48,7 @@ class EntryEntity {
   final TipoEntity tipo;
   final ProductEntity producto;
   final List<LogEntity> logs;
-
+  final int totalPiezasPorPalletSurtidas ;
   EntryEntity({
     required this.id,
     required this.idEntrada,
@@ -67,6 +67,7 @@ class EntryEntity {
     required this.tipo,
     required this.producto,
     required this.logs, 
+    required this.totalPiezasPorPalletSurtidas,
   });
 }
 

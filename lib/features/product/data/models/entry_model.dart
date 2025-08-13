@@ -20,6 +20,7 @@ class EntryModel extends EntryEntity {
     required TipoEntity tipo,
     required ProductEntity producto,
     required List<LogEntity> logs,
+    required int totalPiezasPorPalletSurtidas,
   }) : super(
           id: id,
           idEntrada: idEntrada,
@@ -37,11 +38,12 @@ class EntryModel extends EntryEntity {
           observaciones: observaciones,
           tipo: tipo,
           producto: producto,
-          logs: logs, // NUEVA PROPIEDAD
+          logs: logs, 
+          totalPiezasPorPalletSurtidas: totalPiezasPorPalletSurtidas,
         );
 
   factory EntryModel.fromJson(Map<String, dynamic> json) {
-    // Parse logs
+ 
     List<LogEntity> logsList = [];
     if (json['logs'] != null && json['logs'] is List) {
       logsList = (json['logs'] as List).map((logJson) {
@@ -51,6 +53,7 @@ class EntryModel extends EntryEntity {
           idUsuario: logJson['id_usuario'] ?? 0,
           idTipo: logJson['id_tipo'] ?? 0,
           fechaHora: logJson['fecha_hora']?.toString() ?? '',
+          
           tipo: logJson['tipo'] != null 
             ? TipoEntity(
                 id: logJson['tipo']['id'] ?? 0,
@@ -83,6 +86,7 @@ class EntryModel extends EntryEntity {
       puntos: json['puntos']?.toString() ?? '',
       ordenCompra: json['orden_compra']?.toString() ?? '',
       observaciones: json['observaciones']?.toString() ?? '',
+      totalPiezasPorPalletSurtidas: json['total_piezas_por_pallet_surtidas'] ?? 0,
       tipo: json['tipo'] != null
         ? TipoEntity(
             id: json['tipo']['id'] ?? 0,
@@ -116,6 +120,7 @@ class EntryModel extends EntryEntity {
       puntos: entity.puntos,
       ordenCompra: entity.ordenCompra,
       observaciones: entity.observaciones,
+      totalPiezasPorPalletSurtidas: entity.totalPiezasPorPalletSurtidas,
       tipo: TipoEntity(
         id: entity.tipo.id,
         tipo: entity.tipo.tipo,
@@ -145,6 +150,7 @@ class EntryModel extends EntryEntity {
       'puntos': puntos,
       'orden_compra': ordenCompra,
       'observaciones': observaciones,
+      'total_piezas_por_pallet_surtidas': totalPiezasPorPalletSurtidas,
       'tipo': {
         'id': tipo.id,
         'tipo': tipo.tipo,
@@ -173,7 +179,6 @@ class EntryModel extends EntryEntity {
     };
   }
 
-  // Métodos útiles para trabajar con logs
   LogEntity? get ultimoLog => logs.isNotEmpty ? logs.last : null;
   
   String get estadoActual => ultimoLog?.tipo.tipo ?? 'Sin estado';

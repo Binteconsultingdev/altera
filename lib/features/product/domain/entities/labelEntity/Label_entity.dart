@@ -10,7 +10,7 @@ class LabelEntity {
   final int piezasPorPallet;
   final TipoEntity tipo;
   final UsuarioEntity usuario;
-
+  final AlmacenEntity almacen;
   LabelEntity({
     required this.id,
     required this.idEntrada,
@@ -22,11 +22,24 @@ class LabelEntity {
     required this.fechaHora,
     required this.tipo,
     required this.usuario,
-    required this.piezasPorPallet
+    required this.piezasPorPallet,
+    required this.almacen,
   });
 
 }
 
+
+class AlmacenEntity {
+  int? id;
+  String? codigo;
+  String? nombre;
+
+  AlmacenEntity({
+    this.id,
+    this.codigo,
+    this.nombre,
+  });
+}
 class TipoEntity {
   final int id;
   final String tipo;

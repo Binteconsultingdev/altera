@@ -236,8 +236,29 @@ Widget _buildLabelCard(LabelEntity label, LabelController controller) {
               overflow: TextOverflow.ellipsis,
             ),
             const SizedBox(height: AdminColors.paddingSmall),
-            
-            // Usuario y fecha
+            Row(
+              children: [
+                Icon(
+                  Icons.warehouse,
+                  color: AdminColors.textSecondaryColor,
+                  size: 16,
+                ),
+                const SizedBox(width: 4),
+               Flexible(
+                child: Text(
+                  label.almacen.nombre ?? '',
+                  style: AdminColors.bodyMedium.copyWith(
+                    color: AdminColors.textSecondaryColor,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1, 
+                ),
+              ),
+
+               
+                
+              ],
+            ),
             Row(
               children: [
                 Icon(
@@ -246,12 +267,14 @@ Widget _buildLabelCard(LabelEntity label, LabelController controller) {
                   size: 16,
                 ),
                 const SizedBox(width: 4),
-                Text(
+                Flexible(child:  Text(
                   label.usuario.nombre,
                   style: AdminColors.bodyMedium.copyWith(
                     color: AdminColors.textSecondaryColor,
+                    overflow: TextOverflow.ellipsis
                   ),
-                ),
+                ),),
+               
                 const SizedBox(width: AdminColors.paddingMedium),
                 Icon(
                   Icons.access_time,

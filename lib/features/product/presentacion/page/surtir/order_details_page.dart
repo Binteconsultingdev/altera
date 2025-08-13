@@ -938,19 +938,24 @@ void showDeleteConfirmation(EntryEntity producto) {
       },
     );
   }
+
+  
 Widget _buildProductoEscaneadoItem(EntryEntity producto, int index) {
   // ✅ USAR EL CONTROLADOR PERSISTENTE
-  final TextEditingController piezasController = controller.getControllerForProduct(producto);
   
-  // ✅ SINCRONIZAR EL CONTROLADOR CON EL VALOR ACTUAL (solo si es diferente)
-  if (piezasController.text != producto.piezasPorPallet.toString()) {
-    piezasController.text = producto.piezasPorPallet.toString();
-    // Mover el cursor al final para mejor UX
+  final TextEditingController piezasController = controller.getControllerForProduct(producto);
+   final int piezasPorPalletOriginal = controller.getPiezasPorPalletOriginal(producto.id);
+  final int totalSurtidas = producto.totalPiezasPorPalletSurtidas; 
+  final int faltantes = piezasPorPalletOriginal - totalSurtidas; 
+  
+  if (piezasController.text.isEmpty || piezasController.text == "0") {
+    piezasController.text = faltantes.toString();
     piezasController.selection = TextSelection.fromPosition(
       TextPosition(offset: piezasController.text.length)
     );
   }
-
+  
+  
   return Container(
     margin: EdgeInsets.only(bottom: 12),
     decoration: BoxDecoration(
@@ -1099,29 +1104,27 @@ Widget _buildProductoEscaneadoItem(EntryEntity producto, int index) {
                                   vertical: 4,
                                 ),
                                 isDense: true,
-                                errorStyle: TextStyle(fontSize: 8),
+                                hintText: "Max: $faltantes",
+                                hintStyle: TextStyle(
+                                  color: AdminColors.textSecondaryColor.withOpacity(0.6),
+                                  fontSize: 9,
+                                ),
                               ),
-                              // ✅ ACTUALIZAR EN TIEMPO REAL MIENTRAS ESCRIBES
                               onChanged: (value) {
-                                // Solo si es un número válido, actualizar inmediatamente
+                                // ✅ VALIDACIÓN CON VALORES ORIGINALES
                                 final numero = int.tryParse(value);
-                                if (numero != null && numero >= 0 && value.isNotEmpty) {
+                                if (numero != null && numero > 0 && numero <= faltantes) {
                                   controller.actualizarPiezasPorPallet(producto, value);
                                 }
-                                // Si está vacío o es inválido, no hacer nada (no borrar ni alertar)
                               },
                               onFieldSubmitted: (value) {
-                                // ✅ VALIDACIÓN COMPLETA CUANDO SE CONFIRMA
                                 controller.actualizarPiezasPorPallet(producto, value);
                               },
                               onEditingComplete: () {
-                                // ✅ VALIDACIÓN COMPLETA CUANDO TERMINA LA EDICIÓN
                                 final value = piezasController.text;
                                 controller.actualizarPiezasPorPallet(producto, value);
                               },
-                              // ✅ MANEJAR CUANDO PIERDE EL FOCO
                               onTapOutside: (event) {
-                                // Validación completa cuando se toca fuera del campo
                                 final value = piezasController.text;
                                 controller.actualizarPiezasPorPallet(producto, value);
                                 FocusScope.of(Get.context!).unfocus();
@@ -1131,6 +1134,17 @@ Widget _buildProductoEscaneadoItem(EntryEntity producto, int index) {
                         ),
                       ],
                     ),
+                    
+       // Información adicional sobre el estado del pallet
+       SizedBox(height: 2),
+        Text(
+                      "Total: $piezasPorPalletOriginal | Surtidas: $totalSurtidas | Faltan: $faltantes",
+                      style: TextStyle(
+                        color: AdminColors.textSecondaryColor.withOpacity(0.8),
+                        fontSize: 8,
+                        fontStyle: FontStyle.italic,
+                      ),
+      ),
                   ],
                 ),
               ),
@@ -1476,48 +1490,56 @@ void _showConfirmClearAllDialog() {
 }),
     );
   }
-  Widget _processAssortment() {
-    return Container(
-      padding: EdgeInsets.all(AdminColors.paddingMedium),
-      decoration: BoxDecoration(
-        color: AdminColors.surfaceColor,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 4,
-            offset: Offset(0, -2),
-          ),
-        ],
-      ),
-      child: Obx(() {
-        if (controller.productosEscaneados.isNotEmpty) {
-          return Row(
-            children: [
-              
-              Expanded(
-                flex: 2,
-                child: ElevatedButton(
-                  onPressed: () {
-                   _showProductosEscaneadosModal();
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AdminColors.colorAccionButtons,
-                    foregroundColor: Colors.white,
-                    padding: EdgeInsets.symmetric(vertical: 15),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
+  
+// OPCIÓN 1: Modificar _processAssortment para incluir SafeArea
+Widget _processAssortment() {
+  return Container(
+    padding: EdgeInsets.only(
+      left: AdminColors.paddingMedium,
+      right: AdminColors.paddingMedium,
+      top: AdminColors.paddingMedium,
+      // ✅ AGREGAR padding bottom basado en la navegación del sistema
+      bottom: AdminColors.paddingMedium + MediaQuery.of(Get.context!).padding.bottom,
+    ),
+    decoration: BoxDecoration(
+      color: AdminColors.surfaceColor,
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.1),
+          blurRadius: 4,
+          offset: Offset(0, -2),
+        ),
+      ],
+    ),
+    child: Obx(() {
+      if (controller.productosEscaneados.isNotEmpty) {
+        return Row(
+          children: [
+            Expanded(
+              flex: 2,
+              child: ElevatedButton(
+                onPressed: () {
+                 _showProductosEscaneadosModal();
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AdminColors.colorAccionButtons,
+                  foregroundColor: Colors.white,
+                  padding: EdgeInsets.symmetric(vertical: 15),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                  child: Text("PROCESAR SURTIDO"),
                 ),
+                child: Text("PROCESAR SURTIDO"),
               ),
-            ],
-          );
-        }
-        return SizedBox.shrink();
-      }),
-    );
-  }
+            ),
+          ],
+        );
+      }
+      return SizedBox.shrink();
+    }),
+  );
+}
+
 
   Widget _buildOrderDetailsError() {
     return Center(

@@ -179,7 +179,6 @@ class _PerfilScreenState extends State<PerfilScreen> {
         
         SizedBox(height: 20),
         
-        // Nombre del usuario (dinámico)
         Obx(() => Text(
           controller.userName,
           style: TextStyle(
@@ -196,7 +195,7 @@ class _PerfilScreenState extends State<PerfilScreen> {
         // Email del usuario (dinámico)
         Obx(() => controller.userEmail.isNotEmpty 
           ? Text(
-              controller.userEmail,
+              '${controller.userEmail}',
               style: TextStyle(
                 color: AdminColors.textSecondaryColor,
                 fontWeight: FontWeight.w400,
@@ -207,117 +206,6 @@ class _PerfilScreenState extends State<PerfilScreen> {
           : SizedBox.shrink(),
         ),
       ],
-    );
-  }
-
-  Widget _buildSubscriptionStatus() {
-    final Color textColor = AdminColors.textPrimaryColor;
-    final Color secondaryColor = AdminColors.textSecondaryColor;
-    final Color accentColor = AdminColors.colorAccionButtons;
-    final Color bgColor = Colors.white.withOpacity(0.1);
-    final Color borderColor = Colors.white.withOpacity(0.2);
-    
-    return Container(
-      padding: EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: bgColor,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: borderColor),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 10,
-            spreadRadius: 0,
-            offset: Offset(0, 5),
-          ),
-        ],
-      ),
-      child: Column(
-        children: [
-          // Texto de suscripción
-          Text(
-            "INFORMACIÓN PRINCIPAL",
-            style: TextStyle(
-              color: secondaryColor,
-              fontWeight: FontWeight.w500,
-              fontSize: 12,
-              letterSpacing: 1.5,
-              fontFamily: 'Roboto',
-            ),
-          ),
-          
-          SizedBox(height: 16),
-          
-          // ID del usuario (dinámico)
-          Obx(() => Text(
-            "ID: ${controller.userId}",
-            style: TextStyle(
-              color: textColor,
-              fontWeight: FontWeight.w700,
-              fontSize: 18,
-              letterSpacing: 1,
-              fontFamily: 'Roboto',
-            ),
-          )),
-          
-          SizedBox(height: 20),
-          
-          // Indicador con número de entradas
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Column(
-                children: [
-                  Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      // Círculo de fondo
-                      Container(
-                        width: 90,
-                        height: 90,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: accentColor.withOpacity(0.3),
-                            width: 8,
-                          ),
-                        ),
-                      ),
-                      
-                      // Número de entradas (dinámico)
-                      Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Obx(() => Text(
-                            "${controller.userData.value?.entradas?.length ?? 0}",
-                            style: TextStyle(
-                              color: accentColor,
-                              fontWeight: FontWeight.w800,
-                              fontSize: 32,
-                              fontFamily: 'Roboto',
-                            ),
-                          )),
-                          Text(
-                            "entradas",
-                            style: TextStyle(
-                              color: secondaryColor,
-                              fontWeight: FontWeight.w600,
-                              fontSize: 12,
-                              fontFamily: 'Roboto',
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  
-                  SizedBox(height: 16),
-                ],
-              ),
-            ],
-          ),
-        ],
-      ),
     );
   }
 
@@ -338,6 +226,8 @@ class _PerfilScreenState extends State<PerfilScreen> {
               size: 20,
             ),
             SizedBox(width: 10),
+            Flexible(
+              child:
             Text(
               "INFORMACIÓN PERSONAL",
               style: TextStyle(
@@ -346,8 +236,12 @@ class _PerfilScreenState extends State<PerfilScreen> {
                 fontSize: 14,
                 letterSpacing: 1.5,
                 fontFamily: 'Roboto',
+                
               ),
+              overflow: TextOverflow.ellipsis,
+                 maxLines: 1
             ),
+            )
           ],
         ),
         
@@ -435,66 +329,70 @@ class _PerfilScreenState extends State<PerfilScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Encabezado de sección
-        Row(
-          children: [
-            Icon(
-              Icons.settings_outlined,
-              color: accentColor,
-              size: 20,
-            ),
-            SizedBox(width: 10),
-            Text(
-              "CONFIGURACIÓN",
-              style: TextStyle(
-                color: accentColor,
-                fontWeight: FontWeight.w600,
-                fontSize: 14,
-                letterSpacing: 1.5,
-                fontFamily: 'Roboto',
-              ),
-            ),
-          ],
+       Row(
+  children: [
+    Icon(
+      Icons.settings_outlined,
+      color: accentColor,
+      size: 20,
+    ),
+    SizedBox(width: 10),
+
+    Expanded(
+      child: Text(
+        "CONFIGURACIÓN",
+        style: TextStyle(
+          color: accentColor,
+          fontWeight: FontWeight.w600,
+          fontSize: 14,
+          letterSpacing: 1.5,
+          fontFamily: 'Roboto',
         ),
-        
+        overflow: TextOverflow.ellipsis,
+        maxLines: 1,
+      ),
+    ),
+  ],
+),
+
         SizedBox(height: 20),
         
-        // Container de cerrar sesión
         GestureDetector(
-          onTap: () => controller.cerrarSesion(),
-          child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-            decoration: BoxDecoration(
-              color: bgColor,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: borderColor),
+  onTap: () => controller.cerrarSesion(),
+  child: Container(
+    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+    decoration: BoxDecoration(
+      color: bgColor,
+      borderRadius: BorderRadius.circular(16),
+      border: Border.all(color: borderColor),
+    ),
+    child: Row(
+      children: [
+        Icon(
+          Icons.logout_outlined,
+          color: textColor,
+          size: 22,
+        ),
+        SizedBox(width: 16),
+
+        Expanded(
+          child: Text(
+            "Cerrar sesión",
+            style: TextStyle(
+              color: textColor,
+              fontWeight: FontWeight.w600,
+              fontSize: 16,
+              fontFamily: 'Roboto',
             ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  children: [
-                    Icon(
-                      Icons.logout_outlined,
-                      color: textColor,
-                      size: 22,
-                    ),
-                    SizedBox(width: 16),
-                    Text(
-                      "Cerrar sesión",
-                      style: TextStyle(
-                        color: textColor,
-                        fontWeight: FontWeight.w600,
-                        fontSize: 16,
-                        fontFamily: 'Roboto',
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
+            overflow: TextOverflow.ellipsis,
+            maxLines: 1,
           ),
         ),
+      ],
+    ),
+  ),
+),
+
       ],
     );
   }
