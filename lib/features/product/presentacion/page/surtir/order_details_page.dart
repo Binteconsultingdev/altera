@@ -1,8 +1,10 @@
 import 'package:altera/common/theme/Theme_colors.dart';
 import 'package:altera/common/widgets/custom_alert_type.dart';
 import 'package:altera/common/widgets/labels_loading.dart';
+import 'package:altera/features/product/presentacion/page/surtir/order_details_loading.dart';
 import 'package:altera/features/product/presentacion/page/surtir/pending_orders_controller.dart';
 import 'package:altera/features/product/presentacion/page/productos/qr_scanner_widget.dart';
+import 'package:altera/features/user/presentacion/page/perfil/perfil_loading.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:altera/features/product/domain/entities/orders/pending_orders_entity.dart' hide ClienteEntity;
@@ -35,42 +37,68 @@ Widget build(BuildContext context) {
         color: AdminColors.cardColor, 
       ),
       actions: [
-        Padding(
-          padding: const EdgeInsets.only(right: 8),
-          child: ElevatedButton(
-            onPressed: () {
+  Obx(() => Padding(
+    padding: const EdgeInsets.only(right: 8),
+    child: ElevatedButton(
+      onPressed: controller.isLoadingOrderDetails 
+          ? null 
+          : () {
               controller.iniciarEscaneoQR();
             },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AdminColors.cardColor,
-              foregroundColor: AdminColors.colorAccionButtons,
-              padding: EdgeInsets.all(8),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
-            ),
-            child: Icon(Icons.qr_code_scanner, size: 20),
-          ),
+      style: ElevatedButton.styleFrom(
+        backgroundColor: controller.isLoadingOrderDetails 
+            ? AdminColors.cardColor.withOpacity(0.5) 
+            : AdminColors.cardColor,
+        foregroundColor: controller.isLoadingOrderDetails 
+            ? AdminColors.colorAccionButtons.withOpacity(0.5) 
+            : AdminColors.colorAccionButtons,
+        padding: EdgeInsets.all(8),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
         ),
-        // *** NUEVO: Botón para input manual ***
-        Padding(
-          padding: const EdgeInsets.only(right: 16),
-          child: ElevatedButton(
-            onPressed: () {
+        elevation: controller.isLoadingOrderDetails ? 0 : 2,
+      ),
+      child: Icon(
+        Icons.qr_code_scanner, 
+        size: 20,
+        color: controller.isLoadingOrderDetails 
+            ? AdminColors.colorAccionButtons.withOpacity(0.3)
+            : null,
+      ),
+    ),
+  )),
+  
+  Obx(() => Padding(
+    padding: const EdgeInsets.only(right: 16),
+    child: ElevatedButton(
+      onPressed: controller.isLoadingOrderDetails 
+          ? null
+          : () {
               controller.mostrarInputManual();
             },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AdminColors.cardColor,
-              foregroundColor: AdminColors.colorAccionButtons,
-              padding: EdgeInsets.all(8),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
-            ),
-            child: Icon(Icons.edit, size: 20),
-          ),
+      style: ElevatedButton.styleFrom(
+        backgroundColor: controller.isLoadingOrderDetails 
+            ? AdminColors.cardColor.withOpacity(0.5) 
+            : AdminColors.cardColor,
+        foregroundColor: controller.isLoadingOrderDetails 
+            ? AdminColors.colorAccionButtons.withOpacity(0.5) 
+            : AdminColors.colorAccionButtons,
+        padding: EdgeInsets.all(8),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
         ),
-      ],
+        elevation: controller.isLoadingOrderDetails ? 0 : 2,
+      ),
+      child: Icon(
+        Icons.edit, 
+        size: 20,
+        color: controller.isLoadingOrderDetails 
+            ? AdminColors.colorAccionButtons.withOpacity(0.3)
+            : null,
+      ),
+    ),
+  )),
+],
     ),
 
     body: Obx(() => Stack(
@@ -82,7 +110,6 @@ Widget build(BuildContext context) {
                 padding: EdgeInsets.zero,
                 child: Column(
                   children: [
-                    // Header de la orden (sin padding propio)
                     _buildOrderHeader(),
                     
                     // Contenido principal
@@ -127,10 +154,9 @@ Widget _buildManualInputOverlay() {
             ),
           ),
           
-          // Modal de input
           Center(
             child: GestureDetector(
-              onTap: () {}, // Evitar cerrar al tocar el contenido
+              onTap: () {}, 
               child: Container(
                 margin: EdgeInsets.symmetric(horizontal: 30),
                 padding: EdgeInsets.all(24),
@@ -138,7 +164,7 @@ Widget _buildManualInputOverlay() {
                   color: AdminColors.surfaceColor,
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(
-                    color: Colors.white.withOpacity(0.2),
+                    color: AdminColors.surfaceColor.withOpacity(0.2),
                   ),
                   boxShadow: [
                     BoxShadow(
@@ -490,95 +516,7 @@ Widget _buildOrderHeader() {
           ),
         )),
         
-        SizedBox(height: 12),
         
-        // Indicador de productos escaneados
-        Obx(() {
-          if (controller.productosEscaneados.isNotEmpty) {
-            return Container(
-              padding: EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: AdminColors.colorAccionButtons.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                  color: AdminColors.colorAccionButtons.withOpacity(0.3),
-                ),
-              ),
-              child: Row(
-                children: [
-                  Icon(
-                    Icons.check_circle,
-                    color: AdminColors.colorAccionButtons,
-                    size: 20,
-                  ),
-                  SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      "${controller.productosEscaneados.length} productos escaneados",
-                      style: TextStyle(
-                        color: AdminColors.colorAccionButtons,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                  // Botón para procesar surtido
-                  Obx(() => ElevatedButton(
-                    onPressed: controller.isProcessingSurtido 
-                        ? null
-                        : () {
-                            controller.procesarSurtido(order);
-                            Get.back();
-                            Get.back();
-                          },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: controller.isProcessingSurtido 
-                          ? AdminColors.colorAccionButtons.withOpacity(0.6)
-                          : AdminColors.colorAccionButtons,
-                      foregroundColor: Colors.white,
-                      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      splashFactory: controller.isProcessingSurtido 
-                          ? NoSplash.splashFactory 
-                          : InkRipple.splashFactory,
-                    ),
-                    child: controller.isProcessingSurtido
-                        ? Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              SizedBox(
-                                width: 16,
-                                height: 16,
-                                child: CircularProgressIndicator(
-                                  color: Colors.white,
-                                  strokeWidth: 2,
-                                ),
-                              ),
-                              SizedBox(width: 8),
-                              Text(
-                                "PROCESANDO...",
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 12,
-                                ),
-                              ),
-                            ],
-                          )
-                        : Text(
-                            "PROCESAR SURTIDO",
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 12,
-                            ),
-                          ),
-                  )),
-                ],
-              ),
-            );
-          }
-          return SizedBox.shrink();
-        }),
       ],
     ),
   );
@@ -640,7 +578,7 @@ Widget _buildTotalCard(String titulo, String valor, String unidad, IconData icon
   Widget _buildMainContent() {
   return Obx(() {
     if (controller.isLoadingOrderDetails) {
-      return LabelsLoading();
+      return OrderDetailsLoading();
     }
     
     if (controller.orderDetailsError.isNotEmpty) {
@@ -665,18 +603,14 @@ Widget _buildOrderDetailsContent() {
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Lista de productos escaneados (si hay)
         if (controller.productosEscaneados.isNotEmpty) ...[
           _buildProductosEscaneadosList(),
           const SizedBox(height: AdminColors.paddingLarge),
         ],
         
-        // Información del cliente
-       // _buildClientInfo(controller.selectedOrder!.cliente),
         
         const SizedBox(height: AdminColors.paddingLarge),
         
-        // Lista de movimientos/productos de la orden
         _buildMovimientosList(controller.selectedOrder!.movimientos),
       ],
     ),
@@ -743,7 +677,6 @@ Widget _buildOrderDetailsContent() {
 
   void _showProductosEscaneadosModal() {
   Get.bottomSheet(
-    // ✅ ENVOLVER TODO EN Obx PARA REACTIVIDAD
     Obx(() => Container(
       height: Get.height * 0.8,
       padding: const EdgeInsets.all(AdminColors.paddingLarge),
@@ -925,7 +858,7 @@ void showDeleteConfirmation(EntryEntity producto) {
     showCustomAlert(
       context: Get.context!,
       title: "Confirmar eliminación",
-      message: "¿Estás seguro de que deseas eliminar el producto?",
+      message: "¿Está seguro de desechar esta papeleta? No podrá volver a escanearla",
       confirmText: "ELIMINAR",
       cancelText: "CANCELAR",
       type: CustomAlertType.error, 

@@ -1,0 +1,303 @@
+import 'package:altera/common/theme/Theme_colors.dart';
+import 'package:altera/common/widgets/curve_painter.dart';
+import 'package:flutter/material.dart';
+import 'dart:ui';
+
+class OrderDetailsLoading extends StatefulWidget {
+  const OrderDetailsLoading({Key? key}) : super(key: key);
+  
+  @override
+  State<OrderDetailsLoading> createState() => _OrderDetailsState();
+}
+
+class _OrderDetailsState extends State<OrderDetailsLoading>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _shimmerAnimation;
+  
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 1500),
+      vsync: this,
+    )..repeat(reverse: false);
+    
+    _shimmerAnimation = Tween<double>(begin: -1.0, end: 2.0).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeInOutSine),
+    );
+  }
+  
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+  
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        // Fondo con gradiente
+        Container(
+          decoration: BoxDecoration(
+            gradient: AdminColors.backgroundGradient,
+          ),
+        ),
+        
+        // Overlay de diseño
+        Positioned.fill(
+          child: CustomPaint(
+            painter: CurvePainter(),
+          ),
+        ),
+        
+        // Contenido principal con loading
+        SafeArea(
+          child: AnimatedBuilder(
+            animation: _shimmerAnimation,
+            builder: (context, child) {
+              return _buildPerfilSkeleton(context);
+            },
+          ),
+        ),
+      ],
+    );
+  }
+  
+  Widget _buildShimmerBox({required Widget child}) {
+    return AnimatedBuilder(
+      animation: _shimmerAnimation,
+      builder: (context, _) {
+        return ShaderMask(
+          blendMode: BlendMode.srcIn,
+          shaderCallback: (bounds) {
+            return LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                AdminColors.loaddingwithOpacity1,
+               AdminColors.loaddingwithOpacity3,
+                AdminColors.loaddingwithOpacity1
+              ],
+              stops: [
+                _shimmerAnimation.value - 1,
+                _shimmerAnimation.value,
+                _shimmerAnimation.value + 1,
+              ],
+            ).createShader(bounds);
+          },
+          child: child,
+        );
+      },
+    );
+  }
+
+  Widget _buildPerfilSkeleton(BuildContext context) {
+    return SingleChildScrollView(
+      physics: BouncingScrollPhysics(),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            SizedBox(height: 30),
+            
+              _buildSettingsSkeleton(),
+            
+            SizedBox(height: 40),
+            
+            // Información personal skeleton
+            _buildPersonalInfoSkeleton(),
+            
+            SizedBox(height: 40),
+            
+          ],
+        ),
+      ),
+    );
+  }
+
+
+
+  Widget _buildPersonalInfoSkeleton() {
+    final Color accentColor = AdminColors.colorAccionButtons;
+    
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Encabezado de sección skeleton
+        Row(
+          children: [
+           
+            _buildShimmerBox(
+              child: Container(
+                height: 16,
+                width: 180,
+                decoration: BoxDecoration(
+                  color: AdminColors.loadding,
+                  borderRadius: BorderRadius.circular(4),
+                ),
+              ),
+            ),
+          ],
+        ),
+        
+        SizedBox(height: 20),
+        
+        // Lista de datos personales skeleton
+        _buildInfoItemSkeleton(),
+        _buildInfoItemSkeleton(),
+        _buildInfoItemSkeleton(),
+        _buildInfoItemSkeleton(),
+      ],
+    );
+  }
+
+  Widget _buildInfoItemSkeleton() {
+    final Color iconBgColor =AdminColors.loaddingwithOpacity1;
+    
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16.0),
+      child: Row(
+        children: [
+          // Icono en contenedor redondeado skeleton
+          Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              color: iconBgColor,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(
+              Icons.circle,
+              color: AdminColors.loaddingwithOpacity3,
+              size: 20,
+            ),
+          ),
+          
+          SizedBox(width: 16),
+          
+          // Textos skeleton
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildShimmerBox(
+                  child: Container(
+                    height: 12,
+                    width: 100,
+                    decoration: BoxDecoration(
+                      color: AdminColors.loadding,
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 4),
+                _buildShimmerBox(
+                  child: Container(
+                    height: 16,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color:AdminColors.loadding,
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSettingsSkeleton() {
+    final Color accentColor = AdminColors.colorAccionButtons;
+    final Color bgColor =AdminColors.loaddingwithOpacity1;
+    final Color borderColor = AdminColors.loaddingwithOpacity3;
+    
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Encabezado de sección skeleton
+        Row(
+          children: [
+           
+            _buildShimmerBox(
+              child: Container(
+                height: 16,
+                width: 120,
+                decoration: BoxDecoration(
+                  color: AdminColors.loadding,
+                  borderRadius: BorderRadius.circular(4),
+                ),
+              ),
+            ),
+          ],
+        ),
+        
+        SizedBox(height: 20),
+        
+        // Container de configuración skeleton
+        Container(
+          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+          decoration: BoxDecoration(
+            color: bgColor,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: borderColor),
+          ),
+          child: Row(
+            children: [
+             
+              _buildShimmerBox(
+                child: Container(
+                  height: 16,
+                  width: 100,
+                  decoration: BoxDecoration(
+                    color: AdminColors.loadding,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildFooterSkeleton() {
+    final Color accentColor = AdminColors.colorAccionButtons;
+    
+    return Column(
+      children: [
+        Divider(
+          color: Colors.white24,
+        ),
+        SizedBox(height: 20),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.privacy_tip_outlined,
+              size: 16,
+              color: accentColor.withOpacity(0.5),
+            ),
+            SizedBox(width: 8),
+            _buildShimmerBox(
+              child: Container(
+                height: 14,
+                width: 150,
+                decoration: BoxDecoration(
+                  color: AdminColors.loadding,
+                  borderRadius: BorderRadius.circular(4),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+}

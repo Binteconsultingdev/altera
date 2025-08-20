@@ -9,7 +9,6 @@ import 'package:altera/common/services/auth_service.dart';
 import 'package:altera/features/user/domain/usecases/signin_usecase.dart';
 
 class LoginController extends GetxController {
-  // Cambiamos a late para inicializarlos en onInit
   late final TextEditingController emailController;
   late final TextEditingController passwordController;
   late final FocusNode emailFocusNode;
@@ -26,7 +25,6 @@ class LoginController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    // Inicializamos los controladores aquí
     _initializeControllers();
   }
   
@@ -58,7 +56,6 @@ class LoginController extends GetxController {
         _clearFields();
         await _resetControllersForNewSession();
         
-        // Usar offAllNamed para limpiar la pila de navegación
         Get.offAllNamed(RoutesNames.homePage, arguments: 0);
       } else {
         _showErrorAlert(
@@ -80,7 +77,6 @@ class LoginController extends GetxController {
     print('🔄 Reseteando controllers para nueva sesión...');
     
     try {
-      // Lista de controllers a resetear
       final controllersToDelete = [
         HomeController,
         ProductosController,
@@ -93,7 +89,6 @@ class LoginController extends GetxController {
         }
       }
       
-      // Pequeña pausa para asegurar limpieza
       await Future.delayed(const Duration(milliseconds: 100));
       
       print('✅ Controllers reseteados para nueva sesión');
@@ -163,7 +158,6 @@ class LoginController extends GetxController {
   
   @override
   void onClose() {
-    // Verificamos que los controladores no hayan sido disposed
     if (!emailController.hasListeners) {
       emailController.dispose();
     }

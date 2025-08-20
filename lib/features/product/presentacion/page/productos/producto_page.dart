@@ -597,7 +597,7 @@ void _showDelete(EntryEntity producto) {
     showCustomAlert(
       context: Get.context!,
       title: "Confirmar eliminación",
-      message: "¿Estás seguro de que deseas eliminar el producto?",
+      message: "¿Está seguro de desechar esta papeleta? No podrá volver a escanearla",
       confirmText: "ELIMINAR",
       cancelText: "CANCELAR",
       type: CustomAlertType.error, 

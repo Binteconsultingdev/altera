@@ -27,31 +27,31 @@ class HomeController extends GetxController {
 
   // Lista fija de páginas
   final List<Widget> pages = [
-    LabelScreen(),      // Índice 0
-    ProductosPage(),    // Índice 1
-    PendingOrdersScreen(), // Índice 2
-    PerfilScreen(),     // Índice 3
+    LabelScreen(),      
+    ProductosPage(),   
+    PendingOrdersScreen(), 
+    PerfilScreen(),  
   ];
 
   List<String> get titles => [
-    'Inicio',    // Índice 0
-    'Entrada',   // Índice 1
-    'Surtir',    // Índice 2
-    'Perfil'     // Índice 3
+    'Inicio',  
+    'Entrada', 
+    'Surtir',  
+    'Perfil'   
   ];
 
   List<IconData> get icons => [
-    Icons.home_outlined,        // Índice 0
-    Icons.local_shipping,       // Índice 1
-    Icons.inventory_2_outlined, // Índice 2
-    Icons.person_outline,       // Índice 3
+    Icons.home_outlined,     
+    Icons.local_shipping,     
+    Icons.inventory_2_outlined,
+    Icons.person_outline,     
   ];
 
   List<String?> get assetImages => [
-    null,                // Índice 0
-    'assets/truck.png',  // Índice 1
-    null,                // Índice 2
-    null,                // Índice 3
+    null,               
+    'assets/truck.png', 
+    null,             
+    null,              
   ];
 
   final RxInt selectedIndex = 0.obs;
@@ -61,7 +61,7 @@ class HomeController extends GetxController {
   }
 
   void resetForNewSession() {
-    selectedIndex.value = initialIndex; // Usar el índice inicial
+    selectedIndex.value = initialIndex; 
     isSessionActive.value = true;
     forceUpdate.value = !forceUpdate.value;
   }

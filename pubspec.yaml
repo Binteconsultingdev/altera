@@ -71,6 +71,7 @@ flutter_launcher_icons:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  change_app_package_name: ^1.1.0
   flutter_launcher_icons: ^0.13.1
   flutter_native_splash: ^2.4.4
   # The "flutter_lints" package below contains a set of recommended lints to
