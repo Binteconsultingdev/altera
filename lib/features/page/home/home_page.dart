@@ -7,16 +7,15 @@ import 'package:convex_bottom_bar/convex_bottom_bar.dart';
 import 'dart:ui';
 
 class HomePage extends StatelessWidget {
-  final int? initialIndex; // Parámetro opcional para el índice inicial
+  final int? initialIndex; 
   
   const HomePage({Key? key, this.initialIndex}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    // Crear el controlador con el índice inicial
     final HomeController controller = Get.put(
       HomeController(initialIndex: initialIndex ?? 0),
-      permanent: false, // No permanente para permitir recreación
+      permanent: false,
     );
     
     return Scaffold(
@@ -59,6 +58,7 @@ class HomePage extends StatelessWidget {
       'Inicio',
       'Entrada',
       'Surtir',
+    'Salida',
       'Perfil'
     ];
     

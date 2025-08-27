@@ -38,21 +38,18 @@ class _OrderDetailsState extends State<OrderDetailsLoading>
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        // Fondo con gradiente
         Container(
           decoration: BoxDecoration(
             gradient: AdminColors.backgroundGradient,
           ),
         ),
         
-        // Overlay de diseño
         Positioned.fill(
           child: CustomPaint(
             painter: CurvePainter(),
           ),
         ),
         
-        // Contenido principal con loading
         SafeArea(
           child: AnimatedBuilder(
             animation: _shimmerAnimation,
@@ -107,7 +104,6 @@ class _OrderDetailsState extends State<OrderDetailsLoading>
             
             SizedBox(height: 40),
             
-            // Información personal skeleton
             _buildPersonalInfoSkeleton(),
             
             SizedBox(height: 40),
@@ -121,12 +117,10 @@ class _OrderDetailsState extends State<OrderDetailsLoading>
 
 
   Widget _buildPersonalInfoSkeleton() {
-    final Color accentColor = AdminColors.colorAccionButtons;
     
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Encabezado de sección skeleton
         Row(
           children: [
            
@@ -145,7 +139,6 @@ class _OrderDetailsState extends State<OrderDetailsLoading>
         
         SizedBox(height: 20),
         
-        // Lista de datos personales skeleton
         _buildInfoItemSkeleton(),
         _buildInfoItemSkeleton(),
         _buildInfoItemSkeleton(),
@@ -161,7 +154,6 @@ class _OrderDetailsState extends State<OrderDetailsLoading>
       padding: const EdgeInsets.only(bottom: 16.0),
       child: Row(
         children: [
-          // Icono en contenedor redondeado skeleton
           Container(
             width: 40,
             height: 40,
@@ -178,7 +170,6 @@ class _OrderDetailsState extends State<OrderDetailsLoading>
           
           SizedBox(width: 16),
           
-          // Textos skeleton
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -213,14 +204,12 @@ class _OrderDetailsState extends State<OrderDetailsLoading>
   }
 
   Widget _buildSettingsSkeleton() {
-    final Color accentColor = AdminColors.colorAccionButtons;
     final Color bgColor =AdminColors.loaddingwithOpacity1;
     final Color borderColor = AdminColors.loaddingwithOpacity3;
     
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Encabezado de sección skeleton
         Row(
           children: [
            
@@ -239,7 +228,6 @@ class _OrderDetailsState extends State<OrderDetailsLoading>
         
         SizedBox(height: 20),
         
-        // Container de configuración skeleton
         Container(
           padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
           decoration: BoxDecoration(

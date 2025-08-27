@@ -4,6 +4,7 @@ class AppConstants {
   static String serverBase = dotenv.env['API_BASE'].toString();
 
     static const String catalogstoragekey = "productos_catalogo";
+    static const String cataexittoragekey = "cata_exittorage_key";
 
   static  String codigoQr = 'codigoQr';
   static const String accesos = "accesos";

@@ -31,7 +31,6 @@ class _PerfilScreenState extends State<PerfilScreen> {
         );
       }
 
-      // Mostrar error si hay algún error
       if (controller.errorMessage.value.isNotEmpty) {
         return Scaffold(
           body: Container(
@@ -192,7 +191,6 @@ class _PerfilScreenState extends State<PerfilScreen> {
         
         SizedBox(height: 10),
         
-        // Email del usuario (dinámico)
         Obx(() => controller.userEmail.isNotEmpty 
           ? Text(
               '${controller.userEmail}',
@@ -217,7 +215,6 @@ class _PerfilScreenState extends State<PerfilScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Encabezado de sección
         Row(
           children: [
             Icon(
@@ -247,7 +244,6 @@ class _PerfilScreenState extends State<PerfilScreen> {
         
         SizedBox(height: 20),
         
-        // Lista de datos personales (dinámicos)
         Obx(() => Column(
           children: [
             _buildInfoItem(Icons.badge_outlined, "Nombre completo", controller.userName),
@@ -271,7 +267,6 @@ class _PerfilScreenState extends State<PerfilScreen> {
       padding: const EdgeInsets.only(bottom: 16.0),
       child: Row(
         children: [
-          // Icono en contenedor redondeado
           Container(
             width: 40,
             height: 40,
@@ -288,7 +283,6 @@ class _PerfilScreenState extends State<PerfilScreen> {
           
           SizedBox(width: 16),
           
-          // Textos
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,

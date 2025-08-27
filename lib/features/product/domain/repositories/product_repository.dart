@@ -11,6 +11,8 @@ abstract class ProductRepository {
 
 Future<void> surtir(List<SurtirEntity> poshProductList,String id);
 Future<void> poshEntry(List<PoshProductEntity> poshProductList);
+Future<void> poshExit(List<PoshProductEntity> poshProductList);
+
 Future<List<EntryEntity>> getEntry(String idProducto);
 Future<void>deleteBallot(List<PoshProductEntity> poshProductList);
 Future<List<LabelEntity>> getLabels();

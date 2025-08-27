@@ -1,6 +1,7 @@
 import 'package:altera/common/errors/api_errors.dart';
 import 'package:altera/common/theme/Theme_colors.dart';
 import 'package:altera/common/widgets/custom_alert_type.dart';
+import 'package:altera/features/product/domain/usecases/add_exit_usecase.dart';
 import 'package:altera/features/product/domain/usecases/delete_ballot_usecase.dart';
 import 'package:altera/features/product/presentacion/page/getproducto/entry_controller.dart';
 import 'package:flutter/scheduler.dart';
@@ -16,9 +17,9 @@ import 'package:altera/features/product/domain/entities/poshProduct/posh_product
 import 'package:altera/features/product/domain/usecases/add_entry_usecase.dart';
 import 'package:altera/features/product/domain/usecases/get_producto_usecase.dart';
 
-class ProductosController extends GetxController {
+class ExitController extends GetxController {
   final PreferencesUser _prefsUser = PreferencesUser();
-  final AddEntryUsecase _addEntryUsecase;
+  final AddExitUsecase _exitUsecase;
   final GetProductoUsecase _getEntryUsecase;
   final DeleteBallotUsecase _deleteBallotUsecase;
   
@@ -50,11 +51,11 @@ class ProductosController extends GetxController {
   final TextEditingController manualIdController = TextEditingController();
   final RxBool isProcessingManualId = false.obs;
 
-  ProductosController({
-    required AddEntryUsecase addEntryUsecase,
+  ExitController({
+    required AddExitUsecase exitUsecase,
     required GetProductoUsecase getEntryUsecase,
     required DeleteBallotUsecase deleteBallotUsecase,
-  }) : _addEntryUsecase = addEntryUsecase,
+  }) : _exitUsecase = exitUsecase,
        _getEntryUsecase = getEntryUsecase,
        _deleteBallotUsecase = deleteBallotUsecase;
 
@@ -88,7 +89,7 @@ class ProductosController extends GetxController {
       
       isProcessingManualId.value = true;
       await _agregarProductoPorQR(id.toString());
-    
+    //  cerrarInputManual();
       
     } catch (e) {
       print('❌ Error al parsear ID manual: $e');
@@ -145,32 +146,41 @@ class ProductosController extends GetxController {
   }
 
   void addProductToCart(EntryEntity producto) {
-    String? errorMessage = _validateProductForEntry(producto);
-    if (errorMessage != null) {
-      _showErrorAlert('Producto no válido', errorMessage);
-      return;
-    }
-    int index = productosCarrito.indexWhere((p) => p.id == producto.id);
-    if (index >= 0) {
-      _showErrorAlert('Ups', 'Producto ya agregado');
-    } else {
-      productosCarrito.add(producto);
-      productosCarrito.refresh();
-      guardarProductos();
-    }
+  if (_validarPiezasPorPallet(producto)) {
+    _showErrorAlert(
+      'Sin piezas disponibles', 
+      'No quedan piezas por pallet para dar salida.\n\n'
+      'Piezas surtidas: ${producto.totalPiezasPorPalletSurtidas}\n'
+      'Piezas por pallet: ${producto.piezasPorPallet}'
+    );
+    return;
   }
+  
+  String? errorMessage = _validateProductForEntry(producto);
+  if (errorMessage != null) {
+    _showErrorAlert('Producto no válido', errorMessage);
+    return;
+  }
+  
+  int index = productosCarrito.indexWhere((p) => p.id == producto.id);
+  if (index >= 0) {
+    _showErrorAlert('Ups', 'Producto ya agregado');
+  } else {
+    productosCarrito.add(producto);
+    productosCarrito.refresh();
+    guardarProductos();
+  }
+}
 
   String? _validateProductForEntry(EntryEntity producto) {
     int tipoId = producto.tipo?.id ?? 0;
     switch (tipoId) {
-      case 2:
-        return 'No se puede procesar para entrada';
+      case 5:
+        return 'Ya se le dio entrada a la papeleta';
       case 3:
-        return 'Papeleta no cumple con los requisitos para entrada';
+        return 'Papeleta no cumple con los requisitos para salida';
       case 4:
         return 'Papeleta eliminada - No disponible';
-       case 5:
-        return 'Papeleta no cumple con los requisitos para entrada';
       default:
         return null;
     }
@@ -178,7 +188,7 @@ class ProductosController extends GetxController {
 
   Future<void> cargarProductosGuardados() async {
     try {
-      print('🔍 Cargando productos de entrada desde storage');
+      print('🔍 Cargando productos de salida desde storage');
       
       if (!_prefsUser.isInitialized) {
         await _initializePreferences();
@@ -186,7 +196,7 @@ class ProductosController extends GetxController {
 
       final String? productosJson = await _prefsUser.loadPrefs(
         type: String,
-        key: AppConstants.catalogstoragekey,
+        key: AppConstants.cataexittoragekey,
       );
 
       if (productosJson != null && productosJson.isNotEmpty && productosJson != 'null') {
@@ -202,23 +212,23 @@ class ProductosController extends GetxController {
           productosCarrito.addAll(productos);
           productosCarrito.refresh();
           
-          print('✅ Productos de entrada cargados: ${productos.length}');
+          print('✅ Productos de salida cargados: ${productos.length}');
           print('✅ IDs cargados: ${productos.map((p) => p.idProducto).toList()}');
         } catch (jsonError) {
           print('❌ Error al parsear JSON de productos: $jsonError');
-          await _prefsUser.clearOnePreference(key: AppConstants.catalogstoragekey);
+          await _prefsUser.clearOnePreference(key: AppConstants.cataexittoragekey);
           productosCarrito.clear();
         }
       } else {
         productosCarrito.clear();
-        print('ℹ️ No hay productos de entrada guardados (JSON: "$productosJson")');
+        print('ℹ️ No hay productos de salida guardados (JSON: "$productosJson")');
       }
     } catch (e) {
       print('❌ Error al cargar productos guardados: $e');
       productosCarrito.clear();
       
       try {
-        await _prefsUser.clearOnePreference(key: AppConstants.catalogstoragekey);
+        await _prefsUser.clearOnePreference(key: AppConstants.cataexittoragekey);
       } catch (clearError) {
         print('❌ Error al limpiar datos corruptos: $clearError');
       }
@@ -227,7 +237,7 @@ class ProductosController extends GetxController {
 
  Future<void> guardarProductos() async {
     try {
-      print('💾 Guardando ${productosCarrito.length} productos de entrada');
+      print('💾 Guardando ${productosCarrito.length} productos de salida');
       
       if (!_prefsUser.isInitialized) {
         await _initializePreferences();
@@ -236,7 +246,7 @@ class ProductosController extends GetxController {
       if (productosCarrito.isEmpty) {
         await _prefsUser.savePrefs(
           type: String,
-          key: AppConstants.catalogstoragekey,
+          key: AppConstants.cataexittoragekey,
           value: '[]',
         );
         print('✅ Lista vacía guardada exitosamente');
@@ -253,10 +263,10 @@ class ProductosController extends GetxController {
         final String productosJson = jsonEncode(productosData);
         await _prefsUser.savePrefs(
           type: String,
-          key: AppConstants.catalogstoragekey,
+          key: AppConstants.cataexittoragekey,
           value: productosJson,
         );
-        print('✅ Productos de entrada guardados exitosamente');
+        print('✅ Productos de salida guardados exitosamente');
       } else {
         print('⚠️ No hay datos válidos para guardar');
       }
@@ -375,7 +385,7 @@ void _notificarActualizacionLabels() {
             .join("\n");
         _showErrorAlert(
           'Productos no válidos', 
-          'Los siguientes productos no pueden ser procesados para entrada:\n\n$productosRechazados\n\nRevise los productos.'
+          'Los siguientes productos no pueden ser procesados para salida:\n\n$productosRechazados\n\nRevise los productos.'
         );
         isLoading.value = false;
         return;
@@ -385,8 +395,8 @@ void _notificarActualizacionLabels() {
           .map((entry) => _entryEntityToPoshProductEntity(entry))
           .toList();
       
-      await _addEntryUsecase.execute(productos);
-      _showSuccessAlert('¡Éxito!', 'Productos de entrada guardados correctamente');
+      await _exitUsecase.execute(productos);
+      _showSuccessAlert('¡Éxito!', 'Productos de salida guardados correctamente');
       _notificarActualizacionLabels();
       limpiarCarrito();
     } catch (e) {
@@ -591,7 +601,7 @@ void _notificarActualizacionLabels() {
     
     Future.microtask(() async {
       await guardarProductos();
-      print('🧹 Carrito de entrada limpiado completamente');
+      print('🧹 Carrito de salida limpiado completamente');
     });
   }
 
@@ -655,45 +665,78 @@ void _notificarActualizacionLabels() {
     }
   }
   
-  Future<void> _agregarProductoPorQR(String idStr) async {
-    try {
-      if (isLoading.value) {
-        print('⚠️ Ya se está procesando un QR, ignorando...');
+Future<void> _agregarProductoPorQR(String idStr) async {
+  try {
+    if (isLoading.value) {
+      print('⚠️ Ya se está procesando un QR, ignorando...');
+      return;
+    }
+    isLoading.value = true;
+    int id = int.parse(idStr);
+    print('🔍 Llamando al caso de uso con ID: $id');
+    List<EntryEntity> productosDisponibles = await _getEntryUsecase.execute(id.toString());
+    print('🔍 Productos disponibles encontrados: ${productosDisponibles.length}');
+    
+    if (productosDisponibles.isNotEmpty) {
+      EntryEntity productoDisponible = productosDisponibles.first;
+      print('🔍 Producto encontrado - ID: ${productoDisponible.id}, Tipo: ${productoDisponible.tipo?.id}');
+      
+      if (_validarPiezasPorPallet(productoDisponible)) {
+        _showErrorAlert(
+          'Sin piezas disponibles', 
+          'No quedan piezas por pallet para dar salida.\n\n'
+          'Piezas surtidas: ${productoDisponible.totalPiezasPorPalletSurtidas}\n'
+          'Piezas por pallet: ${productoDisponible.piezasPorPallet}'
+        );
         return;
       }
-      isLoading.value = true;
-      int id = int.parse(idStr);
-      print('🔍 Llamando al caso de uso con ID: $id');
-      List<EntryEntity> productosDisponibles = await _getEntryUsecase.execute(id.toString());
-      print('🔍 Productos disponibles encontrados: ${productosDisponibles.length}');
-      if (productosDisponibles.isNotEmpty) {
-        EntryEntity productoDisponible = productosDisponibles.first;
-        print('🔍 Producto encontrado - ID: ${productoDisponible.id}, Tipo: ${productoDisponible.tipo?.id}');
-        String? errorMessage = _validateProductForEntry(productoDisponible);
-        if (errorMessage != null) {
-          _showErrorAlert('Producto no válido', '$errorMessage\n\nESTATUS: ${productoDisponible.tipo?.tipo}');
-          return;
-        }
-        int index = productosCarrito.indexWhere((p) => p.id == productoDisponible.id);
-        if (index >= 0) {
-          _showErrorAlert('Ups', 'Producto ya agregado');
-        } else {
-          productosCarrito.add(productoDisponible);
-          productosCarrito.refresh();
-          print('🔍 Producto agregado al carrito. Total en carrito: ${productosCarrito.length}');
-          await guardarProductos();
-        }
-      } else {
-        print('❌ No se encontraron productos para ID: $id');
-        _showErrorAlert('Ups', 'Producto no encontrado');
+      
+      String? errorMessage = _validateProductForEntry(productoDisponible);
+      if (errorMessage != null) {
+        _showErrorAlert('Producto no válido', '$errorMessage\n\nESTATUS: ${productoDisponible.tipo?.tipo}');
+        return;
       }
-    } catch (e) {
-      print('❌ Error al procesar el producto: $e');
-      _showErrorAlert('Ups', 'No se pudo procesar el producto');
-    } finally {
-      isLoading.value = false;
+      
+      int index = productosCarrito.indexWhere((p) => p.id == productoDisponible.id);
+      if (index >= 0) {
+        _showErrorAlert('Ups', 'Producto ya agregado');
+      } else {
+        productosCarrito.add(productoDisponible);
+        productosCarrito.refresh();
+        print('🔍 Producto agregado al carrito. Total en carrito: ${productosCarrito.length}');
+        await guardarProductos();
+      }
+    } else {
+      print('❌ No se encontraron productos para ID: $id');
+      _showErrorAlert('Ups', 'Producto no encontrado');
     }
+  } catch (e) {
+    print('❌ Error al procesar el producto: $e');
+    _showErrorAlert('Ups', 'No se pudo procesar el producto');
+  } finally {
+    isLoading.value = false;
   }
+}
+
+bool _validarPiezasPorPallet(EntryEntity producto) {
+  try {
+    int totalSurtidas = producto.totalPiezasPorPalletSurtidas ?? 0;
+    int piezasPorPallet = int.tryParse(producto.piezasPorPallet.toString()) ?? 0;
+    
+    print('🔍 Validando piezas - Surtidas: $totalSurtidas, Por pallet: $piezasPorPallet');
+    
+    bool sinPiezasDisponibles = totalSurtidas >= piezasPorPallet;
+    
+    if (sinPiezasDisponibles) {
+      print('⚠️ No quedan piezas disponibles para el producto ${producto.idProducto}');
+    }
+    
+    return sinPiezasDisponibles;
+  } catch (e) {
+    print('❌ Error al validar piezas por pallet: $e');
+    return false;
+  }
+}
 
   void _showErrorAlert(String title, String message, {VoidCallback? onDismiss}) {
     if (Get.context != null) {

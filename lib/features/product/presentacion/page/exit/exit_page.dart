@@ -1,5 +1,6 @@
 import 'package:altera/common/widgets/curve_painter.dart';
 import 'package:altera/common/widgets/custom_alert_type.dart';
+import 'package:altera/features/product/presentacion/page/exit/exit_controller.dart';
 import 'package:altera/features/product/presentacion/page/productos/producto_controller.dart';
 import 'package:altera/features/user/presentacion/page/perfil/perfil_controller.dart';
 import 'package:flutter/material.dart';
@@ -9,9 +10,9 @@ import 'package:altera/features/product/domain/entities/getEntryEntity/get_entry
 import 'dart:ui';
 import 'package:get/get.dart';
 
-class ProductosPage extends StatelessWidget {
-  final ProductosController controller = Get.find<ProductosController>();
-        final PerfilController perfilController = Get.find<PerfilController>(); 
+class ExitPage extends StatelessWidget {
+  final ExitController controller = Get.find<ExitController>();
+     final PerfilController perfilController = Get.find<PerfilController>(); 
 
   @override
   Widget build(BuildContext context) {
@@ -100,7 +101,7 @@ class ProductosPage extends StatelessWidget {
             
             Center(
               child: GestureDetector(
-                onTap: () {}, 
+                onTap: () {},
                 child: Container(
                   margin: EdgeInsets.symmetric(horizontal: 30),
                   padding: EdgeInsets.all(24),
@@ -154,7 +155,7 @@ class ProductosPage extends StatelessWidget {
                       SizedBox(height: 20),
                       
                       Text(
-                        "Ingresa el ID del producto que deseas agregar a la entrada",
+                        "Ingresa el ID del producto que deseas agregar a la salida",
                         style: TextStyle(
                           color: AdminColors.textSecondaryColor,
                           fontSize: 16,
@@ -320,7 +321,7 @@ class ProductosPage extends StatelessWidget {
               right: 20,
               bottom: 100,
               child: GestureDetector(
-                onTap: () {}, 
+                onTap: () {},
                 child: Container(
                   decoration: BoxDecoration(
                     gradient: AdminColors.backgroundGradient,
@@ -548,8 +549,7 @@ void _showDelete(EntryEntity producto) {
       type: CustomAlertType.error, 
       onConfirm: () {
         Get.back();
-              controller.removeProducto(producto);
-
+      controller.removeProducto(producto);
       },
       onCancel: () {
         Get.back();
@@ -560,9 +560,9 @@ void _showDelete(EntryEntity producto) {
   void _showAdd() {
   showCustomAlert(
     context: Get.context!,
-    title: "Confirmar entrada",
-    message: "¿Deseas agregar estos productos?",
-    confirmText: "AGREGAR",
+    title: "Confirmar salida",
+    message: "¿Deseas procesar la salida de estos productos?",
+    confirmText: "PROCESAR",
     cancelText: "CANCELAR",
     type: CustomAlertType.success,
     onConfirm: () {
@@ -593,7 +593,7 @@ void _showDelete(EntryEntity producto) {
     );
   }
 
-  Widget _buildHeader() {
+ Widget _buildHeader() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -634,6 +634,7 @@ void _showDelete(EntryEntity producto) {
           }
           return SizedBox.shrink();
         }),
+        
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -642,7 +643,7 @@ void _showDelete(EntryEntity producto) {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "Entrada de Productos",
+                    "Salida de Productos",
                     style: TextStyle(
                       color: AdminColors.textPrimaryColor,
                       fontWeight: FontWeight.w800,
@@ -653,7 +654,7 @@ void _showDelete(EntryEntity producto) {
                   ),
                   SizedBox(height: 8),
                   Text(
-                    "Gestión de inventario de entrada",
+                    "Gestión de inventario de salida",
                     style: TextStyle(
                       color: AdminColors.textSecondaryColor,
                       fontSize: 16,
@@ -727,7 +728,7 @@ void _showDelete(EntryEntity producto) {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Image.asset(
-           'assets/truck.png',
+           'assets/trucksalida.png',
             width: 80,
             height: 80,
             color: AdminColors.textSecondaryColor.withOpacity(0.5),
@@ -735,7 +736,7 @@ void _showDelete(EntryEntity producto) {
           
           SizedBox(height: 20),
           Text(
-            "No hay productos en entrada",
+            "No hay productos en salida",
             style: TextStyle(
               color: AdminColors.textPrimaryColor,
               fontWeight: FontWeight.w600,
@@ -773,7 +774,6 @@ void _showDelete(EntryEntity producto) {
               
               SizedBox(width: 12),
               
-             
               ElevatedButton.icon(
                 onPressed: () {
                   controller.mostrarInputManual();
@@ -824,9 +824,9 @@ void _showDelete(EntryEntity producto) {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(
-                  Icons.qr_code_2,
+                  Icons.logout, 
                   size: 40,
-                  color: AdminColors.textSecondaryColor.withOpacity(0.5),
+                  color: AdminColors.primaryColor,
                   ),
                   SizedBox(height: 4),
                  
@@ -944,7 +944,7 @@ void _showDelete(EntryEntity producto) {
                             ),
                             SizedBox(height: 2),
                             Text(
-                              "QUITAR.",
+                              "QUITAR",
                               style: TextStyle(
                                 color: AdminColors.errorColor,
                                 fontSize: 8,
@@ -1048,7 +1048,7 @@ void _showDelete(EntryEntity producto) {
                           _showAdd();
                         },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AdminColors.primaryColor,
+                    backgroundColor: AdminColors.primaryColor, 
                     foregroundColor: Colors.white,
                     padding: EdgeInsets.symmetric(vertical: 15),
                     shape: RoundedRectangleBorder(
@@ -1068,11 +1068,11 @@ void _showDelete(EntryEntity producto) {
                               ),
                             ),
                             SizedBox(width: 12),
-                            Text("GUARDANDO..."),
+                            Text("PROCESANDO..."),
                           ],
                         )
                       : Text(
-                          "GUARDAR ENTRADA",
+                          "PROCESAR SALIDA",
                           style: TextStyle(
                             fontWeight: FontWeight.w700,
                             fontSize: 16,
@@ -1150,9 +1150,9 @@ void _showDelete(EntryEntity producto) {
               child: GestureDetector(
                 onTap: () {},
                 child: QRScannerWidget(
-                  controller: Get.find<ProductosController>(),
-                  title: 'ESCANEAR PARA ENTRADA',
-                  description: 'Escanea el código QR para agregar a entrada',
+                  controller: Get.find<ExitController>(),
+                  title: 'ESCANEAR PARA SALIDA',
+                  description: 'Escanea el código QR para procesar salida',
                 ),
               ),
             ),

@@ -18,7 +18,6 @@ class AuthService extends GetxService {
     return this;
   }
 
-  // Obtener token de sesión guardado
   Future<String?> getToken() async {
     if (_cachedToken != null) return _cachedToken;
 
@@ -42,7 +41,6 @@ class AuthService extends GetxService {
     }
   }
 
-  // Guardar solo el token
   Future<bool> saveToken(String token) async {
     try {
       _cachedToken = token;
@@ -66,7 +64,6 @@ class AuthService extends GetxService {
     }
   }
 
-  // Eliminar token
   Future<bool> logout() async {
     try {
       _cachedToken = null;
@@ -79,7 +76,6 @@ class AuthService extends GetxService {
     }
   }
 
-  // Verificar si el token está disponible
   Future<bool> isLoggedIn() async {
     final token = await getToken();
     return token != null && token.isNotEmpty;

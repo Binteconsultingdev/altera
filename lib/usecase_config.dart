@@ -3,6 +3,7 @@ import 'package:altera/features/product/data/datasources/product_data_sources_im
 import 'package:altera/features/product/data/repositories/product_repository_imp.dart';
 import 'package:altera/features/product/domain/usecases/add_entry_usecase.dart';
 import 'package:altera/features/product/domain/usecases/add_exit_usecase.dart';
+import 'package:altera/features/product/domain/usecases/surtir_productos_usecase.dart';
 import 'package:altera/features/product/domain/usecases/delete_ballot_usecase.dart';
 import 'package:altera/features/product/domain/usecases/get_labels_usecase.dart';
 import 'package:altera/features/product/domain/usecases/get_orders_usecase.dart';
@@ -24,13 +25,14 @@ class UsecaseConfig {
   ProductDataSourcesImp?productDataSourcesImp;
   ProductRepositoryImp?productRepositoryImp;
   AddEntryUsecase?addEntryUsecase;
-  AddExitUsecase? addExitUsecase;
+  AddExitUsecase?addExitUsecase;
+  SurtirProductosUsecase? surtirProductosUsecase;
+  
   GetProductoUsecase? getProductoUsecase;
   DeleteBallotUsecase? deleteBallotUsecase;
   GetLabelsUsecase? getLabelsUsecase;
   GetPendingordersUsecase?getPendingordersUsecase;
   GetOrdersUsecase? getOrdersUsecase;
-
   UsecaseConfig(){
     userDataSourcesImp = UserDataSourcesImp();
     userRepositoryImp = UserRepositoryImp(userDataSourcesImp: userDataSourcesImp!);
@@ -40,8 +42,9 @@ class UsecaseConfig {
     productDataSourcesImp=ProductDataSourcesImp();
     productRepositoryImp=ProductRepositoryImp(productSourcesImp: productDataSourcesImp!);
     addEntryUsecase=AddEntryUsecase(productRepository: productRepositoryImp!);
-    getProductoUsecase=GetProductoUsecase(repository: productRepositoryImp!);
     addExitUsecase=AddExitUsecase(productRepository: productRepositoryImp!);
+    getProductoUsecase=GetProductoUsecase(repository: productRepositoryImp!);
+    surtirProductosUsecase=SurtirProductosUsecase(productRepository: productRepositoryImp!);
     deleteBallotUsecase=DeleteBallotUsecase(productRepository: productRepositoryImp!);
     getLabelsUsecase=GetLabelsUsecase(repository: productRepositoryImp!);
     getPendingordersUsecase=GetPendingordersUsecase(repository: productRepositoryImp!);

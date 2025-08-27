@@ -108,6 +108,39 @@ Future<List<LabelEntity>> getLabels(String token) async {
 
 
 
+
+Future<void> addExit(List<PoshProductEntity> poshProductList, String token) async {
+  try {
+    Uri url = Uri.parse('$defaultApiServer/entradas/salida/');
+    
+    List<Map<String, dynamic>> jsonList = poshProductList
+        .map((entity) => PoshProductModel.fromEntity(entity).toJson())
+        .toList();
+    
+    final response = await http.put(
+      url,
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token'
+      },
+      body: jsonEncode(jsonList),
+    );
+
+    if (response.statusCode == 200) {
+      final dataUTF8 = utf8.decode(response.bodyBytes);
+      final responseDecode = jsonDecode(dataUTF8)['data'];
+      return responseDecode;
+    }
+
+    ApiExceptionCustom exception = ApiExceptionCustom(response: response);
+    exception.validateMesage(); 
+    throw exception;
+    
+  } catch (e, stackTrace) {
+    debugPrint('ERROR: ${e.toString()}, $stackTrace');
+    rethrow;
+  }
+}
 Future<void> addEntry(List<PoshProductEntity> poshProductList, String token) async {
   try {
     Uri url = Uri.parse('$defaultApiServer/entradas/entrada/');

@@ -84,4 +84,14 @@ class ProductRepositoryImp  implements ProductRepository{
       throw Exception('No hay sesión activa. El usuario debe iniciar sesión.');
     }
     return await productSourcesImp.getorders(token: Session, id: id);
+  }
+  
+  @override
+  Future<void> poshExit(List<PoshProductEntity> poshProductList) async {
+    final Session = await authService.getToken();
+
+     if (Session == null){
+      throw Exception('No hay sesión activa. El usuario debe iniciar sesión.');
+    }
+    return await productSourcesImp.addExit(poshProductList, Session);
   }}

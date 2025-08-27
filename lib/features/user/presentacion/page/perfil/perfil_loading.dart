@@ -38,21 +38,18 @@ class _PerfilLoadingState extends State<PerfilLoading>
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        // Fondo con gradiente
         Container(
           decoration: BoxDecoration(
             gradient: AdminColors.backgroundGradient,
           ),
         ),
         
-        // Overlay de diseño
         Positioned.fill(
           child: CustomPaint(
             painter: CurvePainter(),
           ),
         ),
         
-        // Contenido principal con loading
         SafeArea(
           child: AnimatedBuilder(
             animation: _shimmerAnimation,
@@ -103,22 +100,17 @@ class _PerfilLoadingState extends State<PerfilLoading>
           children: [
             SizedBox(height: 30),
             
-            // Cabecera con foto de perfil skeleton
             _buildProfileHeaderSkeleton(),
             
             SizedBox(height: 40),
-            
-            // Información personal skeleton
             _buildPersonalInfoSkeleton(),
             
             SizedBox(height: 40),
             
-            // Configuraciones skeleton
             _buildSettingsSkeleton(),
             
             SizedBox(height: 40),
             
-            // Pie de página skeleton
             _buildFooterSkeleton(),
             
             SizedBox(height: 30),
@@ -133,7 +125,6 @@ class _PerfilLoadingState extends State<PerfilLoading>
     
     return Column(
       children: [
-        // Imagen de perfil skeleton
         Container(
           decoration: BoxDecoration(
             shape: BoxShape.circle,
@@ -180,7 +171,6 @@ class _PerfilLoadingState extends State<PerfilLoading>
         
         SizedBox(height: 20),
         
-        // Nombre del usuario skeleton
         _buildShimmerBox(
           child: Container(
             height: 24,
@@ -194,7 +184,6 @@ class _PerfilLoadingState extends State<PerfilLoading>
         
         SizedBox(height: 10),
         
-        // Email skeleton
         _buildShimmerBox(
           child: Container(
             height: 16,
@@ -216,7 +205,6 @@ class _PerfilLoadingState extends State<PerfilLoading>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Encabezado de sección skeleton
         Row(
           children: [
             Icon(
@@ -240,7 +228,6 @@ class _PerfilLoadingState extends State<PerfilLoading>
         
         SizedBox(height: 20),
         
-        // Lista de datos personales skeleton
         _buildInfoItemSkeleton(),
         _buildInfoItemSkeleton(),
         _buildInfoItemSkeleton(),
@@ -256,7 +243,6 @@ class _PerfilLoadingState extends State<PerfilLoading>
       padding: const EdgeInsets.only(bottom: 16.0),
       child: Row(
         children: [
-          // Icono en contenedor redondeado skeleton
           Container(
             width: 40,
             height: 40,
@@ -272,8 +258,7 @@ class _PerfilLoadingState extends State<PerfilLoading>
           ),
           
           SizedBox(width: 16),
-          
-          // Textos skeleton
+
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -315,7 +300,6 @@ class _PerfilLoadingState extends State<PerfilLoading>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Encabezado de sección skeleton
         Row(
           children: [
             Icon(
@@ -339,7 +323,6 @@ class _PerfilLoadingState extends State<PerfilLoading>
         
         SizedBox(height: 20),
         
-        // Container de configuración skeleton
         Container(
           padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
           decoration: BoxDecoration(

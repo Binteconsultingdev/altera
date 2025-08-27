@@ -151,7 +151,6 @@ Widget _buildLabelCard(LabelEntity label, LabelController controller) {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Header con tipo, ID y piezas
             Row(
               children: [
                 Container(
@@ -210,7 +209,7 @@ Widget _buildLabelCard(LabelEntity label, LabelController controller) {
                   const SizedBox(width: 8),
                 ],
                ConstrainedBox(
-  constraints: BoxConstraints(maxWidth: 80), // ← Ancho máximo para el ID
+  constraints: BoxConstraints(maxWidth: 80),
   child: Text(
     '#${label.id}',
     style: AdminColors.bodySmall.copyWith(
@@ -226,7 +225,6 @@ Widget _buildLabelCard(LabelEntity label, LabelController controller) {
             ),
             const SizedBox(height: AdminColors.paddingSmall),
             
-            // Nombre del producto
             Text(
               label.producto,
               style: AdminColors.headingSmall.copyWith(
@@ -298,18 +296,37 @@ Widget _buildLabelCard(LabelEntity label, LabelController controller) {
     ),
   );
 }
-
-  Color _getTypeColor(String tipo) {
-    switch (tipo.toLowerCase()) {
-      case 'entrada':
-        return AdminColors.successColor;
-      case 'salida':
-        return AdminColors.errorColor;
-      case 'etiqueta creada':
-        return AdminColors.infoColor;
-      default:
-        return AdminColors.primaryColor;
-    }
+Color _getTypeColor(String tipo) {
+  String normalizedTipo = tipo.toLowerCase().trim();
+  
+  switch (normalizedTipo) {
+    case 'papeleta':
+    case 'papeleta creada':
+      return Color(0xFF4F46E5); 
+    
+    case 'entrada':
+      return AdminColors.successColor;
+    
+    case 'Transferencia Pendiente':
+      return AdminColors.errorColor;
+    
+    case 'surtimiento':
+    case 'surtir':
+      return Color(0xFF1D4ED8);
+    
+    case 'eliminación':
+    case 'eliminacion':
+      return Color(0xFF374151);
+    
+    case 'cancelada':
+    case 'cancelado':
+      return Color(0xFFB91C1C);
+    
+    case 'etiqueta creada':
+      return AdminColors.infoColor;
+    
+    default:
+      return AdminColors.primaryColor;
   }
-
+}
 }

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:altera/common/theme/Theme_colors.dart';
+import 'package:altera/features/product/presentacion/page/exit/exit_page.dart';
 import 'package:altera/features/product/presentacion/page/getproducto/labels_page.dart';
 import 'package:altera/features/product/presentacion/page/productos/producto_page.dart';
 import 'package:altera/features/product/presentacion/page/productos/producto_controller.dart';
@@ -14,7 +15,6 @@ class HomeController extends GetxController {
   final RxBool isSessionActive = false.obs;
   final int initialIndex;
 
-  // Constructor que acepta el índice inicial
   HomeController({this.initialIndex = 0});
 
   ProductosController? get productosController {
@@ -25,11 +25,11 @@ class HomeController extends GetxController {
     }
   }
 
-  // Lista fija de páginas
   final List<Widget> pages = [
     LabelScreen(),      
     ProductosPage(),   
     PendingOrdersScreen(), 
+    ExitPage(),
     PerfilScreen(),  
   ];
 
@@ -37,6 +37,7 @@ class HomeController extends GetxController {
     'Inicio',  
     'Entrada', 
     'Surtir',  
+    'Salida',
     'Perfil'   
   ];
 
@@ -44,13 +45,15 @@ class HomeController extends GetxController {
     Icons.home_outlined,     
     Icons.local_shipping,     
     Icons.inventory_2_outlined,
+    Icons.local_shipping,     
     Icons.person_outline,     
   ];
 
   List<String?> get assetImages => [
     null,               
     'assets/truck.png', 
-    null,             
+    null, 
+    'assets/trucksalida.png',             
     null,              
   ];
 
@@ -95,7 +98,6 @@ class HomeController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    // Establecer el índice inicial al inicializar
     selectedIndex.value = initialIndex;
     isSessionActive.value = true;
     print('🏠 HomeController inicializado con índice: $initialIndex (${titles[initialIndex]})');

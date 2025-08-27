@@ -10,7 +10,7 @@ import 'package:altera/features/product/domain/usecases/delete_ballot_usecase.da
 import 'package:altera/features/product/domain/usecases/get_orders_usecase.dart';
 import 'package:altera/features/product/domain/usecases/get_pendingorders_usecase.dart';
 import 'package:altera/features/product/domain/usecases/get_producto_usecase.dart';
-import 'package:altera/features/product/domain/usecases/add_exit_usecase.dart';
+import 'package:altera/features/product/domain/usecases/surtir_productos_usecase.dart';
 import 'package:altera/common/widgets/custom_alert_type.dart';
 import 'package:altera/features/product/presentacion/page/getproducto/entry_controller.dart';
 import 'package:altera/framework/preferences_service.dart';
@@ -18,24 +18,23 @@ import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
-import 'dart:convert'; // Para JSON encoding/decoding
+import 'dart:convert'; 
 
 class PendingOrdersController extends GetxController {
   final GetPendingordersUsecase getPendingOrdersUseCase;
   final GetOrdersUsecase getOrdersUsecase;
   final GetProductoUsecase getProductoUsecase;
-  final AddExitUsecase addExitUsecase;
+  final SurtirProductosUsecase surtirProductosUsecase;
   final DeleteBallotUsecase deleteBallotUsecase; 
 
   PendingOrdersController({
     required this.getPendingOrdersUseCase, 
     required this.getOrdersUsecase,
     required this.getProductoUsecase,
-    required this.addExitUsecase,
+    required this.surtirProductosUsecase,
     required this.deleteBallotUsecase,
   });
 
-  // Estados reactivos existentes
   final RxList<PendingOrdersEntity> _pendingOrders = <PendingOrdersEntity>[].obs;
   final RxList<PendingOrdersEntity> _filteredOrders = <PendingOrdersEntity>[].obs;
   final RxBool _isLoading = false.obs;
@@ -48,26 +47,22 @@ class PendingOrdersController extends GetxController {
 ).obs;
   final TextEditingController _dateController = TextEditingController();
 
-  // Estados para los detalles de la orden
   final Rx<OrdersEntity?> _selectedOrder = Rx<OrdersEntity?>(null);
   final RxBool _isLoadingOrderDetails = false.obs;
   final RxString _orderDetailsError = ''.obs;
 
-  // MODIFICADO: Mapa para almacenar productos escaneados por orden
   final RxMap<int, List<EntryEntity>> _productosEscaneadosPorOrden = <int, List<EntryEntity>>{}.obs;
   final RxBool _isScanning = false.obs;
   final RxBool _isTorchOn = false.obs;
   final RxBool _isProcessingSurtido = false.obs;
   Rx<MobileScannerController?> qrScannerController = Rx<MobileScannerController?>(null);
   
-  // NUEVO: Para manejar la orden actual
   final RxInt _currentOrderId = 0.obs;
   
   String? _lastScannedQR;
   DateTime? _lastScanTime;
   final int _scanCooldownMs = 2000;
 
-  // Getters existentes
   List<PendingOrdersEntity> get pendingOrders => _pendingOrders;
   List<PendingOrdersEntity> get filteredOrders => _filteredOrders;
   bool get isLoading => _isLoading.value;
@@ -79,7 +74,6 @@ class PendingOrdersController extends GetxController {
   bool get isLoadingOrderDetails => _isLoadingOrderDetails.value;
   String get orderDetailsError => _orderDetailsError.value;
 final Map<int, int> _piezasPorPalletOriginales = {};
-  // MODIFICADO: Getter para productos escaneados de la orden actual
   List<EntryEntity> get productosEscaneados => 
       _productosEscaneadosPorOrden[_currentOrderId.value] ?? [];
   
@@ -87,7 +81,6 @@ final Map<int, int> _piezasPorPalletOriginales = {};
   bool get isTorchOn => _isTorchOn.value;
   bool get isProcessingSurtido => _isProcessingSurtido.value;
 
-  // Estadísticas computadas
   int get totalOrders => _pendingOrders.length;
   int get filteredOrdersCount => _filteredOrders.length;
   final Map<int, TextEditingController> _textControllers = {};
@@ -142,22 +135,18 @@ final Map<int, int> _piezasPorPalletOriginales = {};
   }
 Future<void> eliminarPapeleta(EntryEntity producto) async {
     try {
-      _isProcessingSurtido.value = true; // Reutilizar loading existente
+      _isProcessingSurtido.value = true; 
       
       PoshProductEntity poshProduct = _entryEntityToPoshProductEntity(producto);
       List<PoshProductEntity> productosAEliminar = [poshProduct];
-      // Llamar al use case para eliminar
       await deleteBallotUsecase.execute(productosAEliminar);
       
-      // Mostrar mensaje de éxito
       _showSuccessAlert('¡Eliminado!', 'La papeleta ha sido eliminada permanentemente');
       
-      // Remover de la lista local si está presente
       if (_currentOrderId.value != 0) {
         removerProductoEscaneado(producto);
       }
       
-      // Recargar los detalles de la orden para reflejar cambios
       if (_selectedOrder.value != null) {
         await loadOrderDetails(_selectedOrder.value!.id);
         
@@ -212,7 +201,6 @@ Future<void> eliminarPapeleta(EntryEntity producto) async {
     if (jsonString != null && jsonString.isNotEmpty) {
       final Map<String, dynamic> productosGuardados = jsonDecode(jsonString);
       
-      // Limpiar valores anteriores
       _piezasPorPalletOriginales.clear();
       
       for (var entry in productosGuardados.entries) {
@@ -220,7 +208,7 @@ Future<void> eliminarPapeleta(EntryEntity producto) async {
         if (orderId != null) {
           final productosJson = entry.value as List<dynamic>;
           final productos = productosJson
-              .map((json) => _entryEntityFromJson(json)) // Esto restaura los valores originales automáticamente
+              .map((json) => _entryEntityFromJson(json)) 
               .toList();
           
           _productosEscaneadosPorOrden[orderId] = productos;
@@ -236,21 +224,17 @@ Future<void> eliminarPapeleta(EntryEntity producto) async {
   }
 }
 
-  // NUEVO: Método para establecer la orden actual
   void _setCurrentOrderId(int orderId) {
     _currentOrderId.value = orderId;
     print('🔄 Orden actual establecida: $orderId');
     
-    // Inicializar lista vacía si no existe
     if (!_productosEscaneadosPorOrden.containsKey(orderId)) {
       _productosEscaneadosPorOrden[orderId] = <EntryEntity>[];
     }
     
-    // Trigger refresh para actualizar la UI
     _productosEscaneadosPorOrden.refresh();
   }
 
-  // Métodos existentes (mantener todos los métodos anteriores)
   void _updateDateController() {
     _dateController.text = formatDateForInput(_selectedDate.value);
   }
@@ -396,14 +380,12 @@ Future<void> eliminarPapeleta(EntryEntity producto) async {
     _errorMessage.value = '';
   }
 
-  // MODIFICADO: Establecer la orden actual al cargar detalles
   Future<void> loadOrderDetails(int orderId) async {
     try {
       _isLoadingOrderDetails.value = true;
       _orderDetailsError.value = '';
       _selectedOrder.value = null;
       
-      // Establecer la orden actual
       _setCurrentOrderId(orderId);
       
       final orderDetails = await getOrdersUsecase.execute(id: orderId);
@@ -420,13 +402,11 @@ Future<void> eliminarPapeleta(EntryEntity producto) async {
     }
   }
 
-  // MODIFICADO: No limpiar productos escaneados al cambiar de orden
   void clearOrderDetails() {
     _selectedOrder.value = null;
     _orderDetailsError.value = '';
     _isLoadingOrderDetails.value = false;
     _currentOrderId.value = 0;
-    // NO limpiamos productos escaneados aquí
   }
 
   double calculateOrderTotal(OrdersEntity order) {
@@ -441,7 +421,6 @@ Future<void> eliminarPapeleta(EntryEntity producto) async {
     return '\$${price.toStringAsFixed(2)}';
   }
 
-  // MÉTODOS DE ESCANEO QR (mantener funcionalidad)
   void iniciarEscaneoQR() {
     _isScanning.value = true;
     _lastScannedQR = null;
@@ -525,14 +504,12 @@ Future<void> eliminarPapeleta(EntryEntity producto) async {
       EntryEntity productoDisponible = productosDisponibles.first;
       print('🔍 Producto encontrado para surtir - ID: ${productoDisponible.id}');
       
-      // VALIDACIÓN 1: Verificar si el tipo es diferente a 2
       if (productoDisponible.tipo.id != 2) {
         print('❌ Papeleta no cumple con los requisitos - Tipo: ${productoDisponible.tipo.id} (se requiere tipo 2)');
         _showErrorAlert('Papeleta no válida', 'Papeleta no cumple con los requisitos');
         return;
       }
       
-      // ✅ NUEVA VALIDACIÓN: Verificar si la papeleta ya fue surtida por completo
       final int piezasPorPalletTotal = int.tryParse(productoDisponible.piezasPorPallet) ?? 0;
       final int totalPiezasPorPalletSurtidas = productoDisponible.totalPiezasPorPalletSurtidas;
       
@@ -548,7 +525,6 @@ Future<void> eliminarPapeleta(EntryEntity producto) async {
         return;
       }
       
-      // VALIDACIÓN 2: Verificar si el producto está en los movimientos de la orden
       bool productoEstaEnOrden = _selectedOrder.value!.movimientos.any((movimiento) => 
         movimiento.producto.id == productoDisponible.producto?.id
       );
@@ -560,27 +536,22 @@ Future<void> eliminarPapeleta(EntryEntity producto) async {
         return;
       }
       
-      // VALIDACIÓN 3: Verificar si el producto ya está escaneado en esta orden
       List<EntryEntity> productosActuales = _productosEscaneadosPorOrden[_currentOrderId.value] ?? [];
       
       int index = productosActuales.indexWhere((p) => p.id == productoDisponible.id);
       if (index >= 0) {
         _showErrorAlert('Ups', 'Producto ya escaneado en esta orden');
       } else {
-        // ✅ Guardar el valor original de piezasPorPallet ANTES de agregarlo
         _guardarPiezasPorPalletOriginal(productoDisponible);
         
-        // Agregar a la lista de la orden actual
         productosActuales.add(productoDisponible);
         _productosEscaneadosPorOrden[_currentOrderId.value] = productosActuales;
         _productosEscaneadosPorOrden.refresh();
         
-        // Guardar en SharedPreferences
         await _guardarProductosEscaneados();
         
         print('✅ Producto agregado para surtir en orden ${_currentOrderId.value}. Total escaneados: ${productosActuales.length}');
         
-        // ✅ OPCIONAL: Mostrar información sobre cuántas piezas faltan
         final int piezasFaltantes = piezasPorPalletTotal - totalPiezasPorPalletSurtidas;
         print('📊 Papeleta agregada - Faltan $piezasFaltantes piezas de $piezasPorPalletTotal');
       }
@@ -603,10 +574,8 @@ Future<void> eliminarPapeleta(EntryEntity producto) async {
   _productosEscaneadosPorOrden[_currentOrderId.value] = productosActuales;
   _productosEscaneadosPorOrden.refresh();
   
-  // ✅ NUEVO: También limpiar el valor original
   _piezasPorPalletOriginales.remove(producto.id);
   
-  // Guardar cambios
   _guardarProductosEscaneados();
   
   print('🗑️ Producto removido de orden ${_currentOrderId.value}. Quedan: ${productosActuales.length}');
@@ -619,7 +588,6 @@ void limpiarProductosEscaneados() {
   
   final productosActuales = _productosEscaneadosPorOrden[_currentOrderId.value] ?? [];
   
-  // ✅ NUEVO: Limpiar valores originales de los productos de esta orden
   for (var producto in productosActuales) {
     _piezasPorPalletOriginales.remove(producto.id);
   }
@@ -627,34 +595,28 @@ void limpiarProductosEscaneados() {
   _productosEscaneadosPorOrden[_currentOrderId.value] = <EntryEntity>[];
   _productosEscaneadosPorOrden.refresh();
   
-  // Guardar cambios
   _guardarProductosEscaneados();
   
   print('🧹 Productos escaneados limpiados para orden ${_currentOrderId.value}');
 }
-  // NUEVO: Método para limpiar productos de una orden específica
   void limpiarProductosEscaneadosDeOrden(int orderId) {
     _productosEscaneadosPorOrden[orderId] = <EntryEntity>[];
     _productosEscaneadosPorOrden.refresh();
     
-    // Guardar cambios
     _guardarProductosEscaneados();
     
     print('🧹 Productos escaneados limpiados para orden específica: $orderId');
   }
 
-  // NUEVO: Método para obtener productos escaneados de una orden específica
   List<EntryEntity> getProductosEscaneadosDeOrden(int orderId) {
     return _productosEscaneadosPorOrden[orderId] ?? [];
   }
 
-  // NUEVO: Método para verificar si una orden tiene productos escaneados
   bool tieneProductosEscaneados(int orderId) {
     final productos = _productosEscaneadosPorOrden[orderId] ?? [];
     return productos.isNotEmpty;
   }
 
-  // NUEVO: Método para obtener el conteo de productos escaneados por orden
   int getConteoProductosEscaneados(int orderId) {
     final productos = _productosEscaneadosPorOrden[orderId] ?? [];
     return productos.length;
@@ -677,7 +639,6 @@ void limpiarProductosEscaneados() {
       return;
     }
     
-    // ✅ NUEVA VALIDACIÓN: Verificar cada producto antes de procesar
     for (EntryEntity producto in productosEscaneadosOrden) {
       int piezasEditadas = int.tryParse(producto.piezasPorPallet) ?? 0;
       
@@ -687,7 +648,6 @@ void limpiarProductosEscaneados() {
         return;
       }
       
-      // ✅ VALIDACIÓN DE CANTIDAD EXCESIVA AQUÍ
       final int piezasPorPalletOriginal = getPiezasPorPalletOriginal(producto.id);
       final int totalPiezasPorPalletSurtidas = producto.totalPiezasPorPalletSurtidas;
       final int piezasFaltantes = piezasPorPalletOriginal - totalPiezasPorPalletSurtidas;
@@ -701,11 +661,10 @@ void limpiarProductosEscaneados() {
           'Máximo permitido: $piezasFaltantes\n\n'
           'Por favor ajusta la cantidad antes de continuar.'
         );
-        return; // Detener el proceso completo
+        return; 
       }
     }
     
-    // Si llegamos aquí, todas las validaciones pasaron
     List<SurtirEntity> surtirList = [];
     
     for (EntryEntity producto in productosEscaneadosOrden) {
@@ -724,7 +683,7 @@ void limpiarProductosEscaneados() {
     
     print('📦 Enviando ${surtirList.length} productos al surtir con piezas_por_pallet validadas');
     
-    await addExitUsecase.execute(surtirList, order.id.toString());
+    await surtirProductosUsecase.execute(surtirList, order.id.toString());
     _showSuccessAlert('¡Éxito!', 'Surtido procesado correctamente');
     
     limpiarProductosEscaneadosDeOrden(order.id);
@@ -775,7 +734,6 @@ void limpiarProductosEscaneados() {
     });
   }
 
-  // MODIFICADO: Calcular total de piezas por pallet de la orden actual
   int getTotalPiezasPorPalletEscaneados() {
     final productosEscaneadosOrden = _productosEscaneadosPorOrden[_currentOrderId.value] ?? [];
     return productosEscaneadosOrden.fold(0, (sum, producto) {
@@ -805,7 +763,6 @@ void limpiarProductosEscaneados() {
     
     /* Validar las piezas antes de proceder
     if (!_validarPiezasPorPallet(producto, nuevasPiezas)) {
-      // Revertir el valor en el controlador al valor anterior válido
       final controller = getControllerForProduct(producto);
       controller.text = producto.piezasPorPallet;
       return;
@@ -840,11 +797,9 @@ void limpiarProductosEscaneados() {
         logs: producto.logs,
       );
       
-      // Actualizar la lista
       productosActuales[index] = productoActualizado;
       _productosEscaneadosPorOrden[_currentOrderId.value] = productosActuales;
       
-      // Guardar cambios
       _guardarProductosEscaneados();
       
       print('✅ Piezas por pallet actualizadas para papeleta ID ${producto.id}: $piezasEditadas (original: $piezasOriginales)');
@@ -856,9 +811,7 @@ void limpiarProductosEscaneados() {
     _showErrorAlert('Error', 'No se pudo actualizar el valor');
   }
 }
-  // NUEVOS MÉTODOS PARA GESTIÓN AVANZADA
 
-  // Método para limpiar todas las órdenes
   void limpiarTodasLasOrdenes() {
     
     _productosEscaneadosPorOrden.clear();
@@ -867,7 +820,6 @@ void limpiarProductosEscaneados() {
     print('🧹 Todas las órdenes con productos escaneados han sido limpiadas');
   }
 
-  // Método para obtener estadísticas globales
   Map<String, dynamic> getEstadisticasGlobales() {
     int totalOrdenes = _productosEscaneadosPorOrden.length;
     int totalProductos = 0;
@@ -888,7 +840,6 @@ void limpiarProductosEscaneados() {
     };
   }
 
-  // Método para exportar datos (para debugging o backup)
   String exportarDatosEscaneados() {
     try {
       final Map<String, dynamic> datosExport = {
@@ -914,7 +865,6 @@ void limpiarProductosEscaneados() {
     }
   }
 
-  // Método para importar datos (para restaurar backup)
   Future<bool> importarDatosEscaneados(String jsonData) async {
     try {
       final Map<String, dynamic> datosImport = jsonDecode(jsonData);
@@ -946,7 +896,6 @@ void limpiarProductosEscaneados() {
     }
   }
 
-  // Método para validar integridad de los datos
   Future<Map<String, dynamic>> validarIntegridadDatos() async {
     final resultado = <String, dynamic>{
       'esValido': true,
@@ -970,7 +919,6 @@ void limpiarProductosEscaneados() {
         }
 
         for (var producto in productos) {
-          // Validar campos críticos
           if (producto.id == 0 || 
               producto.idProducto == 0 || 
               producto.producto?.codigo.isEmpty == true) {
@@ -979,7 +927,6 @@ void limpiarProductosEscaneados() {
             resultado['esValido'] = false;
           }
 
-          // Validar piezas por pallet
           final piezas = int.tryParse(producto.piezasPorPallet);
           if (piezas == null || piezas < 0) {
             resultado['advertencias'].add('Valor inválido de piezas por pallet en orden $orderId: ${producto.piezasPorPallet}');
@@ -1011,14 +958,13 @@ void limpiarProductosEscaneados() {
     'longitud': entry.longitud,
     'calibre': entry.calibre,
     'piezas_por_pallet': entry.piezasPorPallet,
-    'total_piezas_por_pallet_surtidas': entry.totalPiezasPorPalletSurtidas, // ✅ AGREGADO
+    'total_piezas_por_pallet_surtidas': entry.totalPiezasPorPalletSurtidas, 
     'camas_por_tarima': entry.camasPorTarima,
     'bultos_por_cama': entry.bultosPorCama,
     'piezas_por_bulto': entry.piezasPorBulto,
     'puntos': entry.puntos,
     'orden_compra': entry.ordenCompra,
     'observaciones': entry.observaciones,
-    // ✅ NUEVO: Guardar el valor original de piezasPorPallet
     'piezas_por_pallet_original': _piezasPorPalletOriginales[entry.id] ?? int.tryParse(entry.piezasPorPallet) ?? 0,
     'tipo': {
       'id': entry.tipo?.id ?? 0,
@@ -1048,7 +994,7 @@ EntryEntity _entryEntityFromJson(Map<String, dynamic> json) {
     puntos: json['puntos'] ?? '',
     ordenCompra: json['orden_compra'] ?? '',            
     observaciones: json['observaciones'] ?? '',
-    totalPiezasPorPalletSurtidas: json['total_piezas_por_pallet_surtidas'] ?? 0, // ✅ AGREGADO
+    totalPiezasPorPalletSurtidas: json['total_piezas_por_pallet_surtidas'] ?? 0,
     tipo: json['tipo'] != null && json['tipo'] is Map<String, dynamic>
         ? TipoEntity(
             id: json['tipo']['id'] ?? 0,
@@ -1065,7 +1011,6 @@ EntryEntity _entryEntityFromJson(Map<String, dynamic> json) {
     logs: [],
   );
   
-  // ✅ NUEVO: Restaurar el valor original desde el JSON
   final int valorOriginal = json['piezas_por_pallet_original'] ?? 0;
   if (valorOriginal > 0) {
     _piezasPorPalletOriginales[entryEntity.id] = valorOriginal;
@@ -1099,7 +1044,6 @@ EntryEntity _entryEntityFromJson(Map<String, dynamic> json) {
       
       _isProcessingManualId.value = true;
       await _agregarProductoEscaneado(id.toString());
-     // cerrarInputManual();
       
     } catch (e) {
       print('❌ Error al parsear ID manual para surtir: $e');
@@ -1111,12 +1055,10 @@ EntryEntity _entryEntityFromJson(Map<String, dynamic> json) {
 
 void _notificarActualizacionLabels() {
   try {
-    // Buscar el LabelController si está inicializado
     if (Get.isRegistered<LabelController>()) {
       final labelController = Get.find<LabelController>();
       print('📱 Notificando a LabelController para recargar datos...');
       
-      // Recargar los labels después de un pequeño delay para asegurar que el backend procesó los datos
       Future.delayed(Duration(milliseconds: 500), () {
         labelController.loadLabels();
         print('✅ LabelController recargado exitosamente');
@@ -1126,22 +1068,17 @@ void _notificarActualizacionLabels() {
     }
   } catch (e) {
     print('❌ Error al notificar a LabelController: $e');
-    // No mostramos error al usuario ya que es una funcionalidad secundaria
   }
 }
 bool _validarPiezasPorPallet(EntryEntity producto, String nuevasPiezasStr) {
   try {
     final int nuevasPiezas = int.tryParse(nuevasPiezasStr) ?? 0;
     
-    // Solo validación básica: número negativo o cero
     if (nuevasPiezas <= 0) {
       _showErrorAlert('Valor inválido', 'Las piezas por pallet deben ser mayor a 0');
       return false;
     }
-    
-    // REMOVER la validación de cantidad excesiva aquí
-    // Esta validación se hará en procesarSurtido()
-    
+   
     return true;
   } catch (e) {
     _showErrorAlert('Error', 'No se pudo procesar el valor ingresado');

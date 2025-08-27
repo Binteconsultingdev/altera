@@ -3,7 +3,7 @@ import 'package:altera/common/widgets/custom_alert_type.dart';
 import 'package:altera/common/widgets/labels_loading.dart';
 import 'package:altera/features/product/presentacion/page/surtir/order_details_loading.dart';
 import 'package:altera/features/product/presentacion/page/surtir/pending_orders_controller.dart';
-import 'package:altera/features/product/presentacion/page/productos/qr_scanner_widget.dart';
+import 'package:altera/common/widgets/qr_scanner_widget.dart';
 import 'package:altera/features/user/presentacion/page/perfil/perfil_loading.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -112,22 +112,18 @@ Widget build(BuildContext context) {
                   children: [
                     _buildOrderHeader(),
                     
-                    // Contenido principal
                     _buildMainContent(),
                   ],
                 ),
               ),
             ),
             
-            // Footer fijo
             _processAssortment(),
           ],
         ),
         
         if (controller.isScanning)
           _buildScannerOverlay(),
-          
-        // *** NUEVO: Manual Input Overlay ***
         if (controller.showingManualInput)
           _buildManualInputOverlay(),
       ],
@@ -139,7 +135,6 @@ Widget _buildManualInputOverlay() {
     child: SafeArea(
       child: Stack(
         children: [
-          // Fondo oscurecido
           Positioned.fill(
             child: GestureDetector(
               onTap: () {
@@ -177,7 +172,6 @@ Widget _buildManualInputOverlay() {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    // Header
                     Row(
                       children: [
                         Icon(
@@ -210,7 +204,6 @@ Widget _buildManualInputOverlay() {
                     
                     SizedBox(height: 20),
                     
-                    // Descripción
                     Text(
                       "Ingresa el ID del producto que deseas surtir para la orden ${order.serie}-${order.folio}",
                       style: TextStyle(
@@ -222,7 +215,6 @@ Widget _buildManualInputOverlay() {
                     
                     SizedBox(height: 24),
                     
-                    // Campo de texto
                     Container(
                       decoration: BoxDecoration(
                         color: Colors.white.withOpacity(0.1),
@@ -272,10 +264,8 @@ Widget _buildManualInputOverlay() {
                     
                     SizedBox(height: 24),
                     
-                    // Botones
                     Row(
                       children: [
-                        // Botón cancelar
                         Expanded(
                           child: TextButton(
                             onPressed: () {
@@ -300,7 +290,6 @@ Widget _buildManualInputOverlay() {
                         
                         SizedBox(width: 12),
                         
-                        // Botón agregar
                         Expanded(
                           flex: 2,
                           child: Obx(() => ElevatedButton(
@@ -363,7 +352,6 @@ Widget _buildOrderHeader() {
     ),
     child: Column(
       children: [
-        // Información básica de la orden
         Row(
           children: [
             Expanded(
@@ -421,7 +409,6 @@ Widget _buildOrderHeader() {
         
         SizedBox(height: 12),
         
-        // *** INFORMACIÓN DEL CLIENTE - CON PROTECCIÓN NULL ***
         Obx(() {
           if (controller.selectedOrder != null && controller.selectedOrder!.cliente != null) {
             return Container(
@@ -452,7 +439,6 @@ Widget _buildOrderHeader() {
               ),
             );
           }
-          // Mostrar placeholder mientras carga
           return Container(
             padding: const EdgeInsets.all(AdminColors.paddingMedium),
             margin: const EdgeInsets.only(bottom: 12),
@@ -477,7 +463,6 @@ Widget _buildOrderHeader() {
           );
         }),
         
-        // Tarjeta con totales
         Obx(() => Container(
           padding: EdgeInsets.all(12),
           decoration: BoxDecoration(
@@ -522,7 +507,6 @@ Widget _buildOrderHeader() {
   );
 }
 
-// Nuevo widget para mostrar tarjetas de totales
 Widget _buildTotalCard(String titulo, String valor, String unidad, IconData icono, Color color) {
   return Container(
     padding: EdgeInsets.all(12),
@@ -690,7 +674,6 @@ Widget _buildOrderDetailsContent() {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Handle bar
           Center(
             child: Container(
               width: 40,
@@ -703,7 +686,6 @@ Widget _buildOrderDetailsContent() {
           ),
           const SizedBox(height: AdminColors.paddingMedium),
           
-          // Header - AHORA ES REACTIVO
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -761,7 +743,6 @@ Widget _buildOrderDetailsContent() {
           
           const SizedBox(height: AdminColors.paddingMedium),
           
-          // ✅ VERIFICAR SI HAY PRODUCTOS
           if (controller.productosEscaneados.isEmpty)
             Expanded(
               child: Center(
@@ -795,7 +776,6 @@ Widget _buildOrderDetailsContent() {
               ),
             )
           else
-            // Lista de productos - AHORA ES REACTIVA
             Expanded(
               child: ListView.builder(
                 itemCount: controller.productosEscaneados.length,
@@ -806,7 +786,6 @@ Widget _buildOrderDetailsContent() {
               ),
             ),
           
-          // ✅ BOTÓN DE RESUMEN (si hay productos)
           if (controller.productosEscaneados.isNotEmpty)
             Container(
               padding: EdgeInsets.all(12),
@@ -874,7 +853,6 @@ void showDeleteConfirmation(EntryEntity producto) {
 
   
 Widget _buildProductoEscaneadoItem(EntryEntity producto, int index) {
-  // ✅ USAR EL CONTROLADOR PERSISTENTE
   
   final TextEditingController piezasController = controller.getControllerForProduct(producto);
    final int piezasPorPalletOriginal = controller.getPiezasPorPalletOriginal(producto.id);
@@ -900,10 +878,8 @@ Widget _buildProductoEscaneadoItem(EntryEntity producto, int index) {
     ),
     child: Column(
       children: [
-        // Fila principal con información del producto
         Row(
           children: [
-            // Icono QR
             Container(
               width: 80,
               height: 120,
@@ -945,14 +921,12 @@ Widget _buildProductoEscaneadoItem(EntryEntity producto, int index) {
               ),
             ),
             
-            // Información del producto
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.all(12),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Nombre del producto
                     Text(
                       "${producto.producto?.nombre ?? 'N/A'}",
                       style: TextStyle(
@@ -964,7 +938,6 @@ Widget _buildProductoEscaneadoItem(EntryEntity producto, int index) {
                     ),
                     SizedBox(height: 4),
                     
-                    // Código del producto
                     Text(
                       "Código: ${producto.producto?.codigo ?? 'N/A'}",
                       style: TextStyle(
@@ -975,7 +948,6 @@ Widget _buildProductoEscaneadoItem(EntryEntity producto, int index) {
                     ),
                     SizedBox(height: 4),
                     
-                    // Calibre
                     Text(
                       "Calibre: ${producto.calibre}",
                       style: TextStyle(
@@ -986,7 +958,6 @@ Widget _buildProductoEscaneadoItem(EntryEntity producto, int index) {
                     ),
                     SizedBox(height: 8),
                     
-                    // ✅ CAMPO EDITABLE MEJORADO
                     Row(
                       children: [
                         Text(
@@ -1044,7 +1015,6 @@ Widget _buildProductoEscaneadoItem(EntryEntity producto, int index) {
                                 ),
                               ),
                               onChanged: (value) {
-                                // ✅ VALIDACIÓN CON VALORES ORIGINALES
                                 final numero = int.tryParse(value);
                                 if (numero != null && numero > 0 && numero <= faltantes) {
                                   controller.actualizarPiezasPorPallet(producto, value);
@@ -1068,7 +1038,6 @@ Widget _buildProductoEscaneadoItem(EntryEntity producto, int index) {
                       ],
                     ),
                     
-       // Información adicional sobre el estado del pallet
        SizedBox(height: 2),
         Text(
                       "Total: $piezasPorPalletOriginal | Surtidas: $totalSurtidas | Faltan: $faltantes",
@@ -1083,18 +1052,16 @@ Widget _buildProductoEscaneadoItem(EntryEntity producto, int index) {
               ),
             ),
             
-            // Botón de eliminar
             Container(
   width: 50,
   height: 120,
   child: Column(
     children: [
-      // Botón "Eliminar" - Solo se muestra si el producto NO es gafa (tipo?.id != 1)
       if (producto.tipo?.id != 1) ...[
         Expanded(
           child: GestureDetector(
             onTap: () {
-              showDeleteConfirmation(producto); // Eliminación permanente
+              showDeleteConfirmation(producto); 
             },
             child: Container(
               decoration: BoxDecoration(
@@ -1129,26 +1096,22 @@ Widget _buildProductoEscaneadoItem(EntryEntity producto, int index) {
           ),
         ),
         
-        // Línea divisoria - Solo si hay botón eliminar
         Container(
           height: 1,
           color: Colors.white.withOpacity(0.1),
         ),
       ],
       
-      // Botón "Quitar" - Siempre se muestra
       Expanded(
-        // Si no hay botón eliminar, este ocupa más espacio
         flex: producto.tipo?.id == 1 ? 2 : 1,
         child: GestureDetector(
           onTap: () {
-            _showConfirmDeleteDialog(producto); // Solo quitar de la lista/carrito
+            _showConfirmDeleteDialog(producto);
           },
           child: Container(
             decoration: BoxDecoration(
               color: AdminColors.errorColor.withOpacity(0.2),
               borderRadius: BorderRadius.only(
-                // Si es el único botón, también redondea la parte superior
                 topRight: producto.tipo?.id == 1 ? Radius.circular(16) : Radius.zero,
                 bottomRight: Radius.circular(16),
               ),
@@ -1183,7 +1146,6 @@ Widget _buildProductoEscaneadoItem(EntryEntity producto, int index) {
           ],
         ),
         
-        // Fila inferior con información adicional
         Container(
           padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           decoration: BoxDecoration(
@@ -1279,29 +1241,29 @@ void _showConfirmDeleteDialog(EntryEntity producto) {
     confirmText: 'Quitar',
     cancelText: 'Cancelar',
     onConfirm: () {
-      Navigator.of(Get.context!).pop(); // Cerrar el diálogo
+      Navigator.of(Get.context!).pop();
       controller.removerProductoEscaneado(producto);
     },
     onCancel: () {
-      Navigator.of(Get.context!).pop(); // Cerrar el diálogo
+      Navigator.of(Get.context!).pop(); 
     },
   );
 }
 void _showConfirmClearAllDialog() {
   showCustomAlert(
     context: Get.context!,
-    type: CustomAlertType.error, // Usar error para indicar la seriedad de la acción
+    type: CustomAlertType.error, 
     title: 'Limpiar todo',
     message: '¿Estás seguro de que deseas quitar TODOS los productos escaneados de esta orden?\n\n'
              'Se eliminarán ${controller.productosEscaneados.length} productos',
     confirmText: 'Limpiar todo',
     cancelText: 'Cancelar',
     onConfirm: () {
-      Navigator.of(Get.context!).pop(); // Cerrar el diálogo
+      Navigator.of(Get.context!).pop();
       controller.limpiarProductosEscaneados();
     },
     onCancel: () {
-      Navigator.of(Get.context!).pop(); // Cerrar el diálogo
+      Navigator.of(Get.context!).pop(); 
     },
   );
 }
@@ -1312,7 +1274,6 @@ void _showConfirmClearAllDialog() {
       child: SafeArea(
         child: Stack(
           children: [
-            // Fondo oscurecido
             Positioned.fill(
               child: GestureDetector(
                 onTap: () {
@@ -1327,7 +1288,6 @@ void _showConfirmClearAllDialog() {
               ),
             ),
             
-            // Widget del escáner
             Positioned(
               bottom: 0,
               left: 0,
@@ -1368,7 +1328,7 @@ void _showConfirmClearAllDialog() {
           flex: 2,
           child: Obx(() => ElevatedButton(
             onPressed: controller.isProcessingSurtido 
-                ? null // Deshabilitar cuando está procesando
+                ? null 
                 : () {
                     controller.procesarSurtido(order);
                    
@@ -1382,7 +1342,6 @@ void _showConfirmClearAllDialog() {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
-              // Eliminar efectos visuales cuando está deshabilitado
               elevation: controller.isProcessingSurtido ? 0 : 2,
             ),
             child: controller.isProcessingSurtido
@@ -1424,14 +1383,12 @@ void _showConfirmClearAllDialog() {
     );
   }
   
-// OPCIÓN 1: Modificar _processAssortment para incluir SafeArea
 Widget _processAssortment() {
   return Container(
     padding: EdgeInsets.only(
       left: AdminColors.paddingMedium,
       right: AdminColors.paddingMedium,
       top: AdminColors.paddingMedium,
-      // ✅ AGREGAR padding bottom basado en la navegación del sistema
       bottom: AdminColors.paddingMedium + MediaQuery.of(Get.context!).padding.bottom,
     ),
     decoration: BoxDecoration(

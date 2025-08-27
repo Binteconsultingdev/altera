@@ -2,7 +2,7 @@ import 'package:altera/common/settings/routes_names.dart';
 import 'package:altera/common/theme/Theme_colors.dart';
 import 'package:altera/common/widgets/labels_loading.dart';
 import 'package:altera/features/product/presentacion/page/surtir/pending_orders_controller.dart';
-import 'package:altera/features/product/presentacion/page/productos/qr_scanner_widget.dart';
+import 'package:altera/common/widgets/qr_scanner_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:altera/features/product/domain/entities/orders/pending_orders_entity.dart' hide ClienteEntity;
@@ -407,7 +407,6 @@ class PendingOrdersScreen extends StatelessWidget {
             ),
           ),
           
-          // Scanner overlay
           if (controller.isScanning)
             _buildScannerOverlay(),
         ],
@@ -422,7 +421,6 @@ class PendingOrdersScreen extends StatelessWidget {
       child: SafeArea(
         child: Stack(
           children: [
-            // Fondo oscurecido
             Positioned.fill(
               child: GestureDetector(
                 onTap: () {
@@ -437,7 +435,6 @@ class PendingOrdersScreen extends StatelessWidget {
               ),
             ),
             
-            // Widget del escáner
             Positioned(
               bottom: 0,
               left: 0,
@@ -520,7 +517,6 @@ class PendingOrdersScreen extends StatelessWidget {
           
           const SizedBox(height: AdminColors.paddingLarge),
           
-          // Lista de productos escaneados
        
           _buildMovimientosList(order.movimientos, controller),
         ],

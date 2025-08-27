@@ -16,7 +16,6 @@ class LoginPage extends StatelessWidget {
     return Scaffold(
       body: Stack(
         children: [
-          // Fondo con gradiente cálido
           Container(
             decoration: BoxDecoration(
               gradient: LinearGradient(
@@ -30,10 +29,8 @@ class LoginPage extends StatelessWidget {
             ),
           ),
           
-          // Patrón sutil de fondo
           _buildSimplePattern(),
           
-          // Contenido principal
           SafeArea(
             child: SingleChildScrollView(
               physics: const BouncingScrollPhysics(),
@@ -44,12 +41,10 @@ class LoginPage extends StatelessWidget {
                   children: [
                     SizedBox(height: screenSize.height * 0.08),
                     
-                    // Logo y título simplificados
                     _buildSimpleLogo(),
                     
                     SizedBox(height: screenSize.height * 0.06),
                     
-                    // Formulario de login minimalista
                     _buildLoginForm(),
                     
                     SizedBox(height: 30),
@@ -61,7 +56,6 @@ class LoginPage extends StatelessWidget {
             ),
           ),
           
-          // Overlay de carga
           Obx(() {
             if (controller.isLoading.value) {
               return _buildLoadingOverlay();
@@ -77,7 +71,6 @@ class LoginPage extends StatelessWidget {
   Widget _buildSimplePattern() {
     return Stack(
       children: [
-        // Formas decorativas sutiles
         Positioned(
           top: -screenSize.width * 0.2,
           right: -screenSize.width * 0.2,
@@ -109,7 +102,6 @@ class LoginPage extends StatelessWidget {
   Widget _buildSimpleLogo() {
     return Column(
       children: [
-        // Logo centrado
         Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16),
