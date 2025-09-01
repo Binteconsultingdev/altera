@@ -4,6 +4,7 @@ import 'package:altera/common/widgets/labels_loading.dart';
 import 'package:altera/features/product/presentacion/page/surtir/order_details_loading.dart';
 import 'package:altera/features/product/presentacion/page/surtir/pending_orders_controller.dart';
 import 'package:altera/common/widgets/qr_scanner_widget.dart';
+import 'package:altera/features/user/presentacion/page/perfil/perfil_controller.dart';
 import 'package:altera/features/user/presentacion/page/perfil/perfil_loading.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -15,6 +16,7 @@ import 'dart:ui';
 class OrderDetailsPage extends StatelessWidget {
   final PendingOrdersEntity order;
   final PendingOrdersController controller = Get.find<PendingOrdersController>();
+     final PerfilController perfilController = Get.find<PerfilController>(); 
 
   OrderDetailsPage({Key? key, required this.order}) : super(key: key);
 
@@ -1306,7 +1308,23 @@ void _showConfirmClearAllDialog() {
       ),
     );
   }
-
+  void _showAdd(PendingOrdersEntity order) {
+  showCustomAlert(
+    context: Get.context!,
+  title: "Confirmar Surtimieno - ${perfilController.almacenNombre}",
+    message: "¿Deseas agregar estos productos?",
+    confirmText: "AGREGAR",
+    cancelText: "CANCELAR",
+    type: CustomAlertType.success,
+    onConfirm: () {
+      Get.back();
+      controller.procesarSurtido(order);
+    },
+    onCancel: () {
+      Get.back();
+    },
+  );
+}
   Widget _buildFooter() {
     return Container(
       padding: EdgeInsets.all(AdminColors.paddingMedium),
@@ -1330,8 +1348,8 @@ void _showConfirmClearAllDialog() {
             onPressed: controller.isProcessingSurtido 
                 ? null 
                 : () {
-                    controller.procesarSurtido(order);
-                   
+                  //  controller.procesarSurtido(order);
+                   _showAdd(order);
                   },
             style: ElevatedButton.styleFrom(
               backgroundColor: controller.isProcessingSurtido 
@@ -1443,7 +1461,7 @@ Widget _processAssortment() {
           ),
           const SizedBox(height: AdminColors.paddingMedium),
           Text(
-            'Error al cargar detalles',
+            'Error de Conexión',
             style: AdminColors.headingSmall,
           ),
           const SizedBox(height: AdminColors.paddingSmall),

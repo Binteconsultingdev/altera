@@ -59,10 +59,14 @@ Future<List<EntryEntity>> getEntry(String token, String idProducto) async {
     }
     
     throw ApiExceptionCustom(response: response);
-  } catch (e, stackTrace) {
-    debugPrint('ERROR: ${e.toString()}, $stackTrace');
-    rethrow;
-  }
+  } catch (e)  {
+      if (e is SocketException || e is http.ClientException || e is TimeoutException) {
+
+        throw Exception(convertMessageException(error: e));
+      }
+      print('signin Error detallado: $e');
+      throw Exception('$e');
+    }
 }
 Future<List<LabelEntity>> getLabels(String token) async {
   try {
@@ -100,10 +104,14 @@ Future<List<LabelEntity>> getLabels(String token) async {
     }
         
     throw ApiExceptionCustom(response: response);
-  } catch (e, stackTrace) {
-    debugPrint('ERROR: ${e.toString()}, $stackTrace');
-    rethrow;
-  }
+  } catch (e)  {
+      if (e is SocketException || e is http.ClientException || e is TimeoutException) {
+
+        throw Exception(convertMessageException(error: e));
+      }
+      print('signin Error detallado: $e');
+      throw Exception('$e');
+    }
 }
 
 
@@ -136,9 +144,13 @@ Future<void> addExit(List<PoshProductEntity> poshProductList, String token) asyn
     exception.validateMesage(); 
     throw exception;
     
-  } catch (e, stackTrace) {
-    debugPrint('ERROR: ${e.toString()}, $stackTrace');
-    rethrow;
+  } catch (e) {
+     if (e is SocketException || e is http.ClientException || e is TimeoutException) {
+
+        throw Exception(convertMessageException(error: e));
+      }
+      print('signin Error detallado: $e');
+      throw Exception('$e');
   }
 }
 Future<void> addEntry(List<PoshProductEntity> poshProductList, String token) async {
@@ -168,9 +180,13 @@ Future<void> addEntry(List<PoshProductEntity> poshProductList, String token) asy
     exception.validateMesage(); 
     throw exception;
     
-  } catch (e, stackTrace) {
-    debugPrint('ERROR: ${e.toString()}, $stackTrace');
-    rethrow;
+  } catch (e) {
+     if (e is SocketException || e is http.ClientException || e is TimeoutException) {
+
+        throw Exception(convertMessageException(error: e));
+      }
+      print('signin Error detallado: $e');
+      throw Exception('$e');
   }
 }Future<void> surtir(List<SurtirEntity> poshProductList, String token, String id) async {
   try {
@@ -207,9 +223,12 @@ Future<void> addEntry(List<PoshProductEntity> poshProductList, String token) asy
     
     throw Exception(apiException.message); // ← Ahora usa el mensaje validado
     
-  } catch (e, stackTrace) {
-    debugPrint('❌ Error en catch: ${e.toString()}, $stackTrace');
-    rethrow;
+  } catch (e) {
+      if (e is SocketException || e is http.ClientException || e is TimeoutException) {
+
+        throw Exception(convertMessageException(error: e));
+      }
+      throw Exception('$e');
   }
 }
 
@@ -248,9 +267,12 @@ Future<void> deleteBallot(List<PoshProductEntity> poshProductList, String token)
     exception.validateMesage(); 
     throw exception;
     
-  } catch (e, stackTrace) {
-    debugPrint('ERROR: ${e.toString()}, $stackTrace');
-    rethrow;
+  } catch (e) {
+      if (e is SocketException || e is http.ClientException || e is TimeoutException) {
+
+        throw Exception(convertMessageException(error: e));
+      }
+      throw Exception('$e');
   }
 }
 
@@ -273,9 +295,12 @@ Future<void> deleteBallot(List<PoshProductEntity> poshProductList, String token)
         return items;
       }
       throw ApiExceptionCustom(response: response);
-    } catch (e, stackTrace) {
-      debugPrint('ERROR: ${e.toString()}, $stackTrace');
-      rethrow;
+    } catch (e) {
+       if (e is SocketException || e is http.ClientException || e is TimeoutException) {
+
+        throw Exception(convertMessageException(error: e));
+      }
+      throw Exception('$e');
     }
   }
 
@@ -298,9 +323,13 @@ Future<void> deleteBallot(List<PoshProductEntity> poshProductList, String token)
     }
     
     throw ApiExceptionCustom(response: response);
-  } catch (e, stackTrace) {
-    debugPrint('ERROR: ${e.toString()}, $stackTrace');
-    rethrow;
+  } catch (e) {
+     if (e is SocketException || e is http.ClientException || e is TimeoutException) {
+
+        throw Exception(convertMessageException(error: e));
+      }
+      throw Exception('$e');
+  
   }
 }
 }

@@ -295,7 +295,8 @@ Future<void> eliminarPapeleta(EntryEntity producto) async {
       _filteredOrders.value = orders;
       
     } catch (e) {
-      _errorMessage.value = 'Error al cargar las órdenes: ${e.toString()}';
+      
+      _errorMessage.value = cleanExceptionMessage(e);
       debugPrint('Error loading pending orders: $e');
     } finally {
       _isLoading.value = false;
@@ -395,7 +396,8 @@ Future<void> eliminarPapeleta(EntryEntity producto) async {
       print('📦 Productos escaneados para esta orden: ${productosEscaneados.length}');
       
     } catch (e) {
-      _orderDetailsError.value = 'Error al cargar los detalles: ${e.toString()}';
+
+      _orderDetailsError.value = '${cleanExceptionMessage(e)}';
       debugPrint('Error loading order details: $e');
     } finally {
       _isLoadingOrderDetails.value = false;

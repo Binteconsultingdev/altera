@@ -13,9 +13,7 @@ class UserRepositoryImp  implements UserRepository{
     required this.userDataSourcesImp,
   });
   @override
-  Future<UserDataEntity> obtenerDatosUsuarios(String codigoQr) async {
-    return await userDataSourcesImp.obtenerDatosUsuarios(codigoQr);
-  }
+
   Future<LoginResponse> signin(String email, String password) async {
     return await userDataSourcesImp.signin(email, password);
   }

@@ -49,51 +49,51 @@ class HomePage extends StatelessWidget {
   }
 
   Widget _buildConvexBottomBar(HomeController controller) {
-    final Color activeColor = AdminColors.colorHoverRow;
-    final Color backgroundColor = AdminColors.colornavbar;
-    final Color tabIconColor = AdminColors.textSecondaryColor;
-    final Color selectedTabColor = AdminColors.colordCard;
-    
-    final List<String> labels = [
-      'Inicio',
-      'Entrada',
-      'Surtir',
+  final Color activeColor = AdminColors.colorHoverRow;
+  final Color backgroundColor = AdminColors.colornavbar;
+  final Color tabIconColor = AdminColors.textSecondaryColor;
+  final Color selectedTabColor = AdminColors.colordCard;
+  
+  final List<String> labels = [
+    'Inicio',
+    'Entrada',
+    'Surtir',
     'Salida',
-      'Perfil'
-    ];
-    
-    return ConvexAppBar(
-      style: TabStyle.react,
-      items: List.generate(labels.length, (index) {
-        return TabItem(
-          icon: controller.getTabIcon(
-            index,
-            size: index == controller.selectedIndex.value ? 26.0 : 22.0,
-            color: index == controller.selectedIndex.value ? activeColor : tabIconColor,
-          ),
-          title: labels[index],
-        );
-      }),
-      backgroundColor: backgroundColor,
-      activeColor: activeColor,
-      color: tabIconColor,
-      height: 65,
-      top: -25,
-      curveSize: 100,
-      initialActiveIndex: controller.selectedIndex.value,
-      onTap: (int index) {
-        controller.changePage(index);
-        print('🔄 Tab seleccionado: $index (${labels[index]})');
-      },
-      elevation: 8,
-      gradient: LinearGradient(
-        colors: [
-          selectedTabColor,
-          selectedTabColor.withOpacity(0.8),
-        ],
-        begin: Alignment.topCenter,
-        end: Alignment.bottomCenter,
-      ),
-    );
-  }
+    'Perfil'
+  ];
+  
+  return Obx(() => ConvexAppBar(
+    style: TabStyle.react,
+    items: List.generate(labels.length, (index) {
+      return TabItem(
+        icon: controller.getTabIcon(
+          index,
+          size: index == controller.selectedIndex.value ? 26.0 : 22.0,
+          color: index == controller.selectedIndex.value ? activeColor : tabIconColor,
+        ),
+        title: labels[index],
+      );
+    }),
+    backgroundColor: backgroundColor,
+    activeColor: activeColor,
+    color: tabIconColor,
+    height: 65,
+    top: -25,
+    curveSize: 100,
+    initialActiveIndex: controller.selectedIndex.value,
+    onTap: (int index) {
+      controller.changePage(index);
+      print('🔄 Tab seleccionado: $index (${labels[index]})');
+    },
+    elevation: 8,
+    gradient: LinearGradient(
+      colors: [
+        selectedTabColor,
+        selectedTabColor.withOpacity(0.8),
+      ],
+      begin: Alignment.topCenter,
+      end: Alignment.bottomCenter,
+    ),
+  ));
+}
 }

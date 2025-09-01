@@ -15,10 +15,7 @@ class UserDataSourcesImp {
 
 
 
-  Future<UserDataEntity> obtenerDatosUsuarios( String codigoQr) async {
-   throw UnimplementedError();
-  }
-
+ 
  
   Future<LoginResponse> signin(String email, String password) async {
     try {
@@ -32,23 +29,19 @@ class UserDataSourcesImp {
           'password': password,
         }),
       );
-      print('signin url $defaultApiServer/usuarios/login');
       
       if (response.statusCode == 200) {
         final Map<String, dynamic> responseData = jsonDecode(response.body);
         final loginResponse = LoginResponse.fromJson(responseData);
-        print( 'signin response: $loginResponse');
         return loginResponse;
 
       } else {
         final apiException = ApiExceptionCustom(response: response);
         apiException.validateMesage();     
-        print('signin Error al iniciar sesión: ${apiException.message}');
         throw Exception(apiException.message);
       }
     } catch (e) {
       if (e is SocketException || e is http.ClientException || e is TimeoutException) {
-        print({'signin e.toString()': e.toString()});
 
         throw Exception(convertMessageException(error: e));
       }
@@ -102,9 +95,10 @@ Future<List<UserDataEntity>> userData(String token) async {
     }
   } catch (e) {
     if (e is SocketException || e is http.ClientException || e is TimeoutException) {
-      throw Exception(convertMessageException(error: e));
-    }
-      throw Exception(e.toString());
+
+        throw Exception(convertMessageException(error: e));
+      }
+      throw Exception('$e');
   }
 }
 }

@@ -1,3 +1,4 @@
+import 'package:altera/common/errors/convert_message.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:altera/features/product/domain/entities/labelEntity/Label_entity.dart';
@@ -53,7 +54,7 @@ class LabelController extends GetxController {
       
     } catch (e) {
       hasError.value = true;
-      errorMessage.value = e.toString();
+      errorMessage.value = cleanExceptionMessage(e);;
       labels.clear();
       filteredLabels.clear();
     } finally {

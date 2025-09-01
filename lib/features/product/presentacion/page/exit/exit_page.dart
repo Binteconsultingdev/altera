@@ -560,7 +560,7 @@ void _showDelete(EntryEntity producto) {
   void _showAdd() {
   showCustomAlert(
     context: Get.context!,
-    title: "Confirmar salida",
+    title: "Confirmar salida - ${perfilController.almacenNombre}",
     message: "¿Deseas procesar la salida de estos productos?",
     confirmText: "PROCESAR",
     cancelText: "CANCELAR",

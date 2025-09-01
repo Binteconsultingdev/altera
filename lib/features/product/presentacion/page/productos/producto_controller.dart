@@ -1,4 +1,5 @@
 import 'package:altera/common/errors/api_errors.dart';
+import 'package:altera/common/errors/convert_message.dart';
 import 'package:altera/common/theme/Theme_colors.dart';
 import 'package:altera/common/widgets/custom_alert_type.dart';
 import 'package:altera/features/product/domain/usecases/delete_ballot_usecase.dart';
@@ -394,7 +395,7 @@ void _notificarActualizacionLabels() {
       if (e is ApiExceptionCustom && e.failedProductIds != null && e.failedProductIds!.isNotEmpty) {
         await _handleServerValidationError(e);
       } else {
-        _showErrorAlert('Ups', 'No se pudieron guardar los productos: ${e.toString()}');
+        _showErrorAlert('Ups', 'No se pudieron guardar los productos: ${cleanExceptionMessage(e)}');
       }
     } finally {
       isLoading.value = false;

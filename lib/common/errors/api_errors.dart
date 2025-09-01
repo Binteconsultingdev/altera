@@ -2,7 +2,9 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:altera/common/errors/convert_message.dart';
 import 'package:http/http.dart';
+import 'package:http/http.dart' as http;
 
 class ApiExceptionCustom implements Exception {
   String message;
@@ -25,7 +27,7 @@ class ApiExceptionCustom implements Exception {
         return "Error interno del servidor";
 
       default:
-        return "Error desconocido";
+        return "Error al intentar conectarse con el servidor: revisa que esté encendido";
     }
   }
 
@@ -159,19 +161,36 @@ void validateMesagepallet() {
 
  @override
   String toString() {
-    return message; // Solo devolver el mensaje, sin prefijos adicionales
+    return message; 
   }
 }
 
 String convertMessageException({required dynamic error}) {
-  switch (error) {
-    case SocketException:
-      return 'Servicio no disponible intente mas tarde';
-    case ClientException:
-      return 'Conexion Cerrada';
-    case TimeoutException:
-      return 'La peticion tardo mas  de lo usual, intente de nuevo';
-    default:
-      return error.toString();
+  if (error is SocketException) {
+    return 'Sin conexión a internet o el servidor no está disponible. Verifique su conexión e intente nuevamente';
+  } else if (error is http.ClientException) {
+    String errorStr = error.toString().toLowerCase();
+    if (errorStr.contains('connection refused') || 
+        errorStr.contains('socket') ||
+        errorStr.contains('network unreachable')) {
+      return 'Sin conexión a internet o el servidor no está disponible. Verifique su conexión e intente nuevamente';
+    }
+    return 'Error de conexión. Verifique su conexión a internet.';
+  } else if (error is TimeoutException) {
+    return 'La conexión está muy lenta. Verifique su internet e intente de nuevo.';
+  } else if (error is FormatException) {
+    return 'Error en el formato de respuesta del servidor.';
+  } else {
+    String errorStr = error.toString().toLowerCase();
+    
+    if (errorStr.contains('no internet') || 
+        errorStr.contains('network') ||
+        errorStr.contains('connection') ||
+        errorStr.contains('unreachable') ||
+        errorStr.contains('failed host lookup')) {
+      return 'Sin conexión a internet o el servidor no está disponible. Verifique su conexión e intente nuevamente';
+    }
+    
+    return cleanExceptionMessage(error);
   }
 }

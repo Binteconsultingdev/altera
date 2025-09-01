@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:altera/common/errors/convert_message.dart';
 import 'package:altera/framework/preferences_service.dart';
 import 'package:altera/features/user/domain/entities/client_data_entitie.dart';
 import 'package:altera/features/user/domain/usecases/userdata_usecase.dart';
@@ -33,7 +34,9 @@ class PerfilController extends GetxController {
         userData.value = userList.first; 
       }
     } catch (e) {
-      errorMessage.value = 'Error al cargar datos del usuario: ${e.toString()}';
+            cleanExceptionMessage(e);
+
+      errorMessage.value = cleanExceptionMessage(e);
       print('Error en loadUserData: $e');
     } finally {
       isLoading.value = false;
