@@ -416,7 +416,7 @@ class ProductosPage extends StatelessWidget {
                               
                               SizedBox(height: 24),
                               
-                              Container(
+                             /* Container(
                                 width: double.infinity,
                                 child: ElevatedButton.icon(
                                   onPressed: () {
@@ -433,7 +433,7 @@ class ProductosPage extends StatelessWidget {
                                     ),
                                   ),
                                 ),
-                              ),
+                              ),*/
                             ],
                           ),
                         ),
@@ -866,7 +866,14 @@ void _showDelete(EntryEntity producto) {
                       fontStyle: FontStyle.italic,
                     ),
                   ),
-                  
+                   Text(
+                    "entrada: ${producto.sugerencias.sugerencia_entrada?? 'N/A'}",
+                    style: TextStyle(
+                      color: AdminColors.textSecondaryColor,
+                      fontSize: 12,
+                      fontStyle: FontStyle.italic,
+                    ),
+                  ),
                   SizedBox(height: 8),
                 ],
               ),

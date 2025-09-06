@@ -858,11 +858,9 @@ Widget _buildProductoEscaneadoItem(EntryEntity producto, int index) {
   
   final TextEditingController piezasController = controller.getControllerForProduct(producto);
    final int piezasPorPalletOriginal = controller.getPiezasPorPalletOriginal(producto.id);
-  final int totalSurtidas = producto.totalPiezasPorPalletSurtidas; 
-  final int faltantes = piezasPorPalletOriginal - totalSurtidas; 
   
   if (piezasController.text.isEmpty || piezasController.text == "0") {
-    piezasController.text = faltantes.toString();
+    piezasController.text =producto.sugerencias.sugerencia_surtir.toString();
     piezasController.selection = TextSelection.fromPosition(
       TextPosition(offset: piezasController.text.length)
     );
@@ -1010,7 +1008,7 @@ Widget _buildProductoEscaneadoItem(EntryEntity producto, int index) {
                                   vertical: 4,
                                 ),
                                 isDense: true,
-                                hintText: "Max: $faltantes",
+                                hintText: "Max:${producto.sugerencias.sugerencia_surtir}",
                                 hintStyle: TextStyle(
                                   color: AdminColors.textSecondaryColor.withOpacity(0.6),
                                   fontSize: 9,
@@ -1018,7 +1016,7 @@ Widget _buildProductoEscaneadoItem(EntryEntity producto, int index) {
                               ),
                               onChanged: (value) {
                                 final numero = int.tryParse(value);
-                                if (numero != null && numero > 0 && numero <= faltantes) {
+                                if (numero != null && numero > 0 && numero <= producto.sugerencias.sugerencia_surtir) {
                                   controller.actualizarPiezasPorPallet(producto, value);
                                 }
                               },
@@ -1042,7 +1040,7 @@ Widget _buildProductoEscaneadoItem(EntryEntity producto, int index) {
                     
        SizedBox(height: 2),
         Text(
-                      "Total: $piezasPorPalletOriginal | Surtidas: $totalSurtidas | Faltan: $faltantes",
+                      "Total: $piezasPorPalletOriginal | Surtidas:  ${producto.summarystorage.surtimientos} | Faltan: ${producto.sugerencias.sugerencia_surtir}",
                       style: TextStyle(
                         color: AdminColors.textSecondaryColor.withOpacity(0.8),
                         fontSize: 8,
@@ -1480,25 +1478,6 @@ Widget _processAssortment() {
     );
   }
 
-  Widget _buildClientInfo(ClienteEntity cliente) {
-    return Container(
-      padding: const EdgeInsets.all(AdminColors.paddingMedium),
-      decoration: AdminColors.cardDecoration,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Información del Cliente',
-            style: AdminColors.headingSmall,
-          ),
-          const SizedBox(height: AdminColors.paddingSmall),
-          _buildDetailRow('Nombre:', cliente.cliente),
-          _buildDetailRow('Código:', cliente.codigo),
-        ],
-      ),
-    );
-  }
-
   Widget _buildMovimientosList(List<MovimientoEntity> movimientos) {
     return Container(
       padding: const EdgeInsets.all(AdminColors.paddingMedium),
@@ -1556,6 +1535,8 @@ Widget _processAssortment() {
                       'Código: ${movimiento.producto.codigo}',
                       style: AdminColors.bodySmall,
                     ),
+                    const SizedBox(height: 4),
+                    
                   ],
                 ),
               ),

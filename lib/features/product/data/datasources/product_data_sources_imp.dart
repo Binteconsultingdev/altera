@@ -185,7 +185,6 @@ Future<void> addEntry(List<PoshProductEntity> poshProductList, String token) asy
 
         throw Exception(convertMessageException(error: e));
       }
-      print('signin Error detallado: $e');
       throw Exception('$e');
   }
 }Future<void> surtir(List<SurtirEntity> poshProductList, String token, String id) async {
@@ -215,13 +214,11 @@ Future<void> addEntry(List<PoshProductEntity> poshProductList, String token) asy
       return responseDecode;
     }
 
-    print('❌ Error del servidor (${response.statusCode}): ${response.body}');
     
-    // ✅ CAMBIO PRINCIPAL: Crear la excepción personalizada y validar el mensaje
     final apiException = ApiExceptionCustom(response: response);
-    apiException.validateMesagepallet(); // ← Esto extrae el mensaje real del servidor
+    apiException.validateMesagepallet();
     
-    throw Exception(apiException.message); // ← Ahora usa el mensaje validado
+    throw Exception(apiException.message); 
     
   } catch (e) {
       if (e is SocketException || e is http.ClientException || e is TimeoutException) {

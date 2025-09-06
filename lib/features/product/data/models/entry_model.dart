@@ -20,7 +20,8 @@ class EntryModel extends EntryEntity {
     required TipoEntity tipo,
     required ProductEntity producto,
     required List<LogEntity> logs,
-    required int totalPiezasPorPalletSurtidas,
+    required Sugerencias sugerencias,
+    required Summarystorage summarystorage,
   }) : super(
           id: id,
           idEntrada: idEntrada,
@@ -39,7 +40,8 @@ class EntryModel extends EntryEntity {
           tipo: tipo,
           producto: producto,
           logs: logs, 
-          totalPiezasPorPalletSurtidas: totalPiezasPorPalletSurtidas,
+          sugerencias: sugerencias,
+          summarystorage: summarystorage,
         );
 
   factory EntryModel.fromJson(Map<String, dynamic> json) {
@@ -86,13 +88,28 @@ class EntryModel extends EntryEntity {
       puntos: json['puntos']?.toString() ?? '',
       ordenCompra: json['orden_compra']?.toString() ?? '',
       observaciones: json['observaciones']?.toString() ?? '',
-      totalPiezasPorPalletSurtidas: json['total_piezas_por_pallet_surtidas'] ?? 0,
       tipo: json['tipo'] != null
         ? TipoEntity(
             id: json['tipo']['id'] ?? 0,
             tipo: json['tipo']['tipo'] ?? '',
           )
         : TipoEntity(id: 0, tipo: ''),
+      sugerencias: json['sugerencias'] != null
+        ? Sugerencias(
+            sugerencia_entrada: json['sugerencias']['sugerencia_entrada'] ?? '',
+            sugerencia_surtir: json['sugerencias']['sugerencia_surtir'] ?? '',
+          )
+        : Sugerencias(sugerencia_entrada: 0, sugerencia_surtir: 0),
+      summarystorage: json['resumen_mi_almacen'] != null
+        ? Summarystorage(
+            entradas: json['resumen_mi_almacen']['entradas'] ?? 0,
+            surtimientos: json['resumen_mi_almacen']['surtimientos'] ?? 0,
+            eliminaciones: json['resumen_mi_almacen']['eliminaciones'] ?? 0,
+            salidas: json['resumen_mi_almacen']['salidas'] ?? 0,
+            cancelaciones: json['resumen_mi_almacen']['cancelaciones'] ?? 0,
+            stock_en_mi_almacen: json['resumen_mi_almacen']['stock_en_mi_almacen'] ?? 0,
+          )
+        : Summarystorage(entradas: 0, surtimientos: 0, eliminaciones: 0, salidas: 0, cancelaciones: 0, stock_en_mi_almacen: 0),
       producto: json['producto'] != null
         ? ProductEntity(
             id: json['producto']['id'] ?? 0,
@@ -100,7 +117,7 @@ class EntryModel extends EntryEntity {
             codigo: json['producto']['codigo'] ?? '',
           )
         : ProductEntity(id: 0, nombre: '', codigo: ''),
-      logs: logsList, // NUEVA PROPIEDAD
+      logs: logsList, 
     );
   }
 
@@ -120,17 +137,28 @@ class EntryModel extends EntryEntity {
       puntos: entity.puntos,
       ordenCompra: entity.ordenCompra,
       observaciones: entity.observaciones,
-      totalPiezasPorPalletSurtidas: entity.totalPiezasPorPalletSurtidas,
       tipo: TipoEntity(
         id: entity.tipo.id,
         tipo: entity.tipo.tipo,
+      ),
+      sugerencias: Sugerencias(
+        sugerencia_entrada: entity.sugerencias.sugerencia_entrada,
+        sugerencia_surtir: entity.sugerencias.sugerencia_surtir,
+      ),
+      summarystorage: Summarystorage(
+        entradas: entity.summarystorage.entradas,
+        surtimientos: entity.summarystorage.surtimientos,
+        eliminaciones: entity.summarystorage.eliminaciones,
+        salidas: entity.summarystorage.salidas,
+        cancelaciones: entity.summarystorage.cancelaciones,
+        stock_en_mi_almacen: entity.summarystorage.stock_en_mi_almacen,
       ),
       producto: ProductEntity(
         id: entity.producto.id,
         nombre: entity.producto.nombre,
         codigo: entity.producto.codigo,
       ),
-      logs: entity.logs, // NUEVA PROPIEDAD
+      logs: entity.logs, 
     );
   }
 
@@ -150,10 +178,21 @@ class EntryModel extends EntryEntity {
       'puntos': puntos,
       'orden_compra': ordenCompra,
       'observaciones': observaciones,
-      'total_piezas_por_pallet_surtidas': totalPiezasPorPalletSurtidas,
       'tipo': {
         'id': tipo.id,
         'tipo': tipo.tipo,
+      },
+      'sugerencias': {
+        'sugerencia_entrada': sugerencias.sugerencia_entrada,
+        'sugerencia_surtir': sugerencias.sugerencia_surtir,
+      },
+      'resumen_mi_almacen': {
+        'entradas': summarystorage.entradas,
+        'surtimientos': summarystorage.surtimientos,
+        'eliminaciones': summarystorage.eliminaciones,
+        'salidas': summarystorage.salidas,
+        'cancelaciones': summarystorage.cancelaciones,
+        'stock_en_mi_almacen': summarystorage.stock_en_mi_almacen,
       },
       'producto': {
         'id': producto.id,

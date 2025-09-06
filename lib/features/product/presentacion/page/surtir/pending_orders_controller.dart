@@ -482,7 +482,15 @@ Future<void> eliminarPapeleta(EntryEntity producto) async {
       _showErrorAlert('QR Inválido', 'El código QR debe contener solo números');
     }
   }
-
+void resetControllerForProduct(EntryEntity producto) {
+  if (_textControllers.containsKey(producto.id)) {
+    final controller = _textControllers[producto.id]!;
+    controller.text = producto.sugerencias.sugerencia_surtir.toString();
+    controller.selection = TextSelection.fromPosition(
+      TextPosition(offset: controller.text.length)
+    );
+  }
+}
 
   Future<void> _agregarProductoEscaneado(String idStr) async {
   try {
@@ -513,19 +521,13 @@ Future<void> eliminarPapeleta(EntryEntity producto) async {
       }
       
       final int piezasPorPalletTotal = int.tryParse(productoDisponible.piezasPorPallet) ?? 0;
-      final int totalPiezasPorPalletSurtidas = productoDisponible.totalPiezasPorPalletSurtidas;
-      
-      if (totalPiezasPorPalletSurtidas >= piezasPorPalletTotal) {
-        print('❌ Papeleta ya surtida por completo - Total: $piezasPorPalletTotal, Surtidas: $totalPiezasPorPalletSurtidas');
-        _showErrorAlert(
-          'Papeleta completa', 
-          'Esta papeleta ya fue surtida por completo.\n\n'
-          'Total del pallet: $piezasPorPalletTotal\n'
-          'Ya surtidas: $totalPiezasPorPalletSurtidas\n\n'
-          'No se pueden agregar más piezas.'
-        );
-        return;
-      }
+      final int totalPiezasPorPalletSurtidas = productoDisponible.summarystorage.salidas ?? 0;
+     if (productoDisponible.sugerencias?.sugerencia_surtir != null &&
+    productoDisponible.sugerencias!.sugerencia_surtir <= 0) {
+  _showErrorAlert('Sin stock', 'La papeleta no cuenta con stock suficiente para surtir.');
+  return;
+}
+
       
       bool productoEstaEnOrden = _selectedOrder.value!.movimientos.any((movimiento) => 
         movimiento.producto.id == productoDisponible.producto?.id
@@ -548,6 +550,8 @@ Future<void> eliminarPapeleta(EntryEntity producto) async {
         
         productosActuales.add(productoDisponible);
         _productosEscaneadosPorOrden[_currentOrderId.value] = productosActuales;
+        resetControllerForProduct(productoDisponible);
+
         _productosEscaneadosPorOrden.refresh();
         
         await _guardarProductosEscaneados();
@@ -651,16 +655,15 @@ void limpiarProductosEscaneados() {
       }
       
       final int piezasPorPalletOriginal = getPiezasPorPalletOriginal(producto.id);
-      final int totalPiezasPorPalletSurtidas = producto.totalPiezasPorPalletSurtidas;
-      final int piezasFaltantes = piezasPorPalletOriginal - totalPiezasPorPalletSurtidas;
+      final int totalPiezasPorPalletSurtidas = producto.summarystorage.salidas;
       
-      if (piezasEditadas > piezasFaltantes) {
+      if (piezasEditadas > producto.sugerencias.sugerencia_surtir) {
         _showErrorAlert(
           'Cantidad excesiva', 
           'No puedes surtir ${piezasEditadas} piezas del producto "${producto.producto?.nombre ?? 'ID: ${producto.id}'}".\n\n'
           'Total del pallet: $piezasPorPalletOriginal\n'
           'Ya surtidas: $totalPiezasPorPalletSurtidas\n'
-          'Máximo permitido: $piezasFaltantes\n\n'
+          'Máximo permitido: ${producto.sugerencias.sugerencia_surtir}\n\n'
           'Por favor ajusta la cantidad antes de continuar.'
         );
         return; 
@@ -779,7 +782,6 @@ void limpiarProductosEscaneados() {
     
     if (index != -1) {
       final productoActualizado = EntryEntity(
-        totalPiezasPorPalletSurtidas: producto.totalPiezasPorPalletSurtidas,
         id: producto.id,
         idEntrada: producto.idEntrada,
         idProducto: producto.idProducto,
@@ -795,6 +797,8 @@ void limpiarProductosEscaneados() {
         ordenCompra: producto.ordenCompra,
         observaciones: producto.observaciones,
         tipo: producto.tipo,
+        sugerencias: producto.sugerencias,
+        summarystorage: producto.summarystorage,
         producto: producto.producto,
         logs: producto.logs,
       );
@@ -960,7 +964,6 @@ void limpiarProductosEscaneados() {
     'longitud': entry.longitud,
     'calibre': entry.calibre,
     'piezas_por_pallet': entry.piezasPorPallet,
-    'total_piezas_por_pallet_surtidas': entry.totalPiezasPorPalletSurtidas, 
     'camas_por_tarima': entry.camasPorTarima,
     'bultos_por_cama': entry.bultosPorCama,
     'piezas_por_bulto': entry.piezasPorBulto,
@@ -996,13 +999,29 @@ EntryEntity _entryEntityFromJson(Map<String, dynamic> json) {
     puntos: json['puntos'] ?? '',
     ordenCompra: json['orden_compra'] ?? '',            
     observaciones: json['observaciones'] ?? '',
-    totalPiezasPorPalletSurtidas: json['total_piezas_por_pallet_surtidas'] ?? 0,
+    
     tipo: json['tipo'] != null && json['tipo'] is Map<String, dynamic>
         ? TipoEntity(
             id: json['tipo']['id'] ?? 0,
             tipo: json['tipo']['tipo'] ?? '',
           )
         : TipoEntity(id: 0, tipo: 'Desconocido'),
+      sugerencias: json['sugerencias'] != null && json['sugerencias'] is Map<String, dynamic>
+            ? Sugerencias(
+                sugerencia_entrada: json['sugerencias']['sugerencia_entrada'] ?? '',
+                sugerencia_surtir: json['sugerencias']['sugerencia_surtir'] ?? '',
+              )
+            : Sugerencias(sugerencia_entrada: 0, sugerencia_surtir: 0),
+      summarystorage: json['resumen_mi_almacen'] != null && json['resumen_mi_almacen'] is Map<String, dynamic>
+            ? Summarystorage(
+                entradas: json['resumen_mi_almacen']['entradas'] ?? 0,
+                surtimientos: json['resumen_mi_almacen']['surtimientos'] ?? 0,
+                eliminaciones: json['resumen_mi_almacen']['eliminaciones'] ?? 0,
+                salidas: json['resumen_mi_almacen']['salidas'] ?? 0,
+                cancelaciones: json['resumen_mi_almacen']['cancelaciones'] ?? 0,
+                stock_en_mi_almacen: json['resumen_mi_almacen']['stock_en_mi_almacen'] ?? 0,
+              )
+            : Summarystorage(entradas: 0, surtimientos: 0, eliminaciones: 0, salidas: 0, cancelaciones: 0, stock_en_mi_almacen: 0),
     producto: json['producto'] != null && json['producto'] is Map<String, dynamic>
         ? ProductEntity(
             id: json['producto']['id'] ?? 0,

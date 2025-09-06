@@ -151,7 +151,7 @@ class ExitController extends GetxController {
     _showErrorAlert(
       'Sin piezas disponibles', 
       'No quedan piezas por pallet para dar salida.\n\n'
-      'Piezas surtidas: ${producto.totalPiezasPorPalletSurtidas}\n'
+      'Piezas surtidas: ${producto.summarystorage.salidas}\n'
       'Piezas por pallet: ${producto.piezasPorPallet}'
     );
     return;
@@ -177,14 +177,23 @@ class ExitController extends GetxController {
     int tipoId = producto.tipo?.id ?? 0;
     switch (tipoId) {
       case 5:
-        return 'Ya se le dio entrada a la papeleta';
+        return 'Ya se le dio salida a la papeleta';
+      case 1:
+        return 'papeleta es de tipo entrada';
       case 3:
         return 'Papeleta no cumple con los requisitos para salida';
       case 4:
         return 'Papeleta eliminada - No disponible';
-      default:
-        return null;
+     
     }
+
+     if (producto.sugerencias?.sugerencia_surtir != null &&
+    producto.sugerencias!.sugerencia_surtir <= 0) {
+   return 'Sin stock la papeleta no cuenta con stock suficiente para salida';
+
+}
+     
+    return null;
   }
 
   Future<void> cargarProductosGuardados() async {
@@ -325,7 +334,6 @@ class ExitController extends GetxController {
         puntos: json['puntos'] ?? '',
         ordenCompra: json['orden_compra'] ?? '',            
         observaciones: json['observaciones'] ?? '',
-        totalPiezasPorPalletSurtidas: json['total_piezas_por_pallet_surtidas'] ?? 0,
 
         tipo: json['tipo'] != null && json['tipo'] is Map<String, dynamic>
             ? TipoEntity(
@@ -333,6 +341,22 @@ class ExitController extends GetxController {
                 tipo: json['tipo']['tipo'] ?? '',
               )
             : TipoEntity(id: 0, tipo: 'Desconocido'),
+        sugerencias: json['sugerencias'] != null && json['sugerencias'] is Map<String, dynamic>
+            ? Sugerencias(
+                sugerencia_entrada: json['sugerencias']['sugerencia_entrada'] ?? '',
+                sugerencia_surtir: json['sugerencias']['sugerencia_surtir'] ?? '',
+              )
+            : Sugerencias(sugerencia_entrada: 0, sugerencia_surtir: 0),
+        summarystorage: json['resumen_mi_almacen'] != null && json['resumen_mi_almacen'] is Map<String, dynamic>
+            ? Summarystorage(
+                entradas: json['resumen_mi_almacen']['entradas'] ?? 0,
+                surtimientos: json['resumen_mi_almacen']['surtimientos'] ?? 0,
+                eliminaciones: json['resumen_mi_almacen']['eliminaciones'] ?? 0,
+                salidas: json['resumen_mi_almacen']['salidas'] ?? 0,
+                cancelaciones: json['resumen_mi_almacen']['cancelaciones'] ?? 0,
+                stock_en_mi_almacen: json['resumen_mi_almacen']['stock_en_mi_almacen'] ?? 0,
+              )
+            : Summarystorage(entradas: 0, surtimientos: 0, eliminaciones: 0, salidas: 0, cancelaciones: 0, stock_en_mi_almacen: 0),
         producto: json['producto'] != null && json['producto'] is Map<String, dynamic>
             ? ProductEntity(
                 id: json['producto']['id'] ?? 0,
@@ -682,15 +706,7 @@ Future<void> _agregarProductoPorQR(String idStr) async {
       EntryEntity productoDisponible = productosDisponibles.first;
       print('🔍 Producto encontrado - ID: ${productoDisponible.id}, Tipo: ${productoDisponible.tipo?.id}');
       
-      if (_validarPiezasPorPallet(productoDisponible)) {
-        _showErrorAlert(
-          'Sin piezas disponibles', 
-          'No quedan piezas por pallet para dar salida.\n\n'
-          'Piezas surtidas: ${productoDisponible.totalPiezasPorPalletSurtidas}\n'
-          'Piezas por pallet: ${productoDisponible.piezasPorPallet}'
-        );
-        return;
-      }
+      
       
       String? errorMessage = _validateProductForEntry(productoDisponible);
       if (errorMessage != null) {
@@ -721,7 +737,7 @@ Future<void> _agregarProductoPorQR(String idStr) async {
 
 bool _validarPiezasPorPallet(EntryEntity producto) {
   try {
-    int totalSurtidas = producto.totalPiezasPorPalletSurtidas ?? 0;
+    int totalSurtidas = producto.summarystorage.salidas ?? 0;
     int piezasPorPallet = int.tryParse(producto.piezasPorPallet.toString()) ?? 0;
     
     print('🔍 Validando piezas - Surtidas: $totalSurtidas, Por pallet: $piezasPorPallet');

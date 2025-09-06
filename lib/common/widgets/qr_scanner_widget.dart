@@ -3,10 +3,9 @@ import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:altera/common/theme/Theme_colors.dart';
 import 'package:altera/features/product/presentacion/page/productos/producto_controller.dart';
 import 'package:altera/features/product/presentacion/page/surtir/pending_orders_controller.dart';
-import 'package:altera/features/product/presentacion/page/exit/exit_controller.dart';  // Importar ExitController
+import 'package:altera/features/product/presentacion/page/exit/exit_controller.dart';
 import 'package:get/get.dart';
 
-// Mixin común para los controladores que usan QR Scanner
 mixin QRScannerMixin {
   Rx<MobileScannerController?> get qrScannerController;
   RxBool get isTorchOn;
@@ -31,12 +30,11 @@ class QRScannerWidget extends StatelessWidget {
   dynamic get _controller {
     if (controller != null) return controller;
     
-    // Intentar encontrar controladores en orden de prioridad
     try {
       return Get.find<ProductosController>();
     } catch (e) {
       try {
-        return Get.find<ExitController>(); // Agregar búsqueda de ExitController
+        return Get.find<ExitController>();
       } catch (e) {
         try {
           return Get.find<PendingOrdersController>();
@@ -68,7 +66,6 @@ class QRScannerWidget extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // Mango para arrastrar
           Center(
             child: Container(
               width: 40,
@@ -81,7 +78,6 @@ class QRScannerWidget extends StatelessWidget {
           ),
           SizedBox(height: 20),
           
-          // Título y descripción dinámicos
           Text(
             _getTitle(scannerController, title),
             style: TextStyle(
@@ -105,7 +101,6 @@ class QRScannerWidget extends StatelessWidget {
           ),
           SizedBox(height: 20),
           
-          // Escáner QR
           Container(
             height: 300,
             child: ClipRRect(
@@ -113,7 +108,6 @@ class QRScannerWidget extends StatelessWidget {
               child: Stack(
                 alignment: Alignment.center,
                 children: [
-                  // Scanner de fondo
                   Obx(() {
                     final scannerCtrl = _getQRScannerController(scannerController);
                     if (scannerCtrl == null || scannerCtrl.value == null) {
@@ -159,7 +153,6 @@ class QRScannerWidget extends StatelessWidget {
                                 SizedBox(height: 8),
                                 ElevatedButton(
                                   onPressed: () {
-                                    // Recrear el controller
                                     scannerController.detenerEscaneoQR();
                                     scannerController.iniciarEscaneoQR();
                                   },
@@ -176,7 +169,6 @@ class QRScannerWidget extends StatelessWidget {
                     );
                   }),
                   
-                  // Overlay con marco de escaneo - color dinámico según tipo
                   Container(
                     decoration: BoxDecoration(
                       border: Border.all(color: _getFrameColor(scannerController), width: 2),
@@ -184,7 +176,6 @@ class QRScannerWidget extends StatelessWidget {
                     ),
                   ),
                   
-                  // Marco de escaneo
                   Container(
                     height: 200,
                     width: 200,
@@ -194,7 +185,6 @@ class QRScannerWidget extends StatelessWidget {
                     ),
                   ),
                   
-                  // Línea de escaneo animada con color dinámico
                   ScannerAnimation(
                     width: 180,
                     color: _getScanLineColor(scannerController),
@@ -206,7 +196,6 @@ class QRScannerWidget extends StatelessWidget {
           
           SizedBox(height: 20),
           
-          // Texto de instrucción adicional
           Text(
             'Coloca el código QR dentro del marco y mantén estable el dispositivo',
             style: TextStyle(
@@ -219,11 +208,9 @@ class QRScannerWidget extends StatelessWidget {
           
           SizedBox(height: 20),
           
-          // Controles de cámara
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              // Botón para encender/apagar la linterna
               Expanded(
                 child: Obx(() => ElevatedButton.icon(
                   onPressed: scannerController.toggleTorch,
@@ -242,7 +229,6 @@ class QRScannerWidget extends StatelessWidget {
               
               const SizedBox(width: 12),
               
-              // Botón para cambiar de cámara
               Expanded(
                 child: ElevatedButton.icon(
                   onPressed: scannerController.switchCamera,
@@ -260,7 +246,6 @@ class QRScannerWidget extends StatelessWidget {
           
           SizedBox(height: 16),
           
-          // Botón para cancelar el escaneo
           TextButton(
             onPressed: () {
               scannerController.detenerEscaneoQR();
@@ -278,7 +263,6 @@ class QRScannerWidget extends StatelessWidget {
     );
   }
 
-  // Método para obtener el título según el tipo de controller
   String _getTitle(dynamic controller, String? customTitle) {
     if (customTitle != null) return customTitle;
     
@@ -293,7 +277,6 @@ class QRScannerWidget extends StatelessWidget {
     return 'ESCANEAR QR DE PRODUCTO';
   }
 
-  // Método para obtener la descripción según el tipo de controller
   String _getDescription(dynamic controller, String? customDescription) {
     if (customDescription != null) return customDescription;
     
@@ -308,25 +291,21 @@ class QRScannerWidget extends StatelessWidget {
     return 'Escanea el código QR del producto';
   }
 
-  // Método para obtener el color del marco según el tipo
   Color _getFrameColor(dynamic controller) {
    
-    return AdminColors.primaryColor; // Color por defecto para entrada
+    return AdminColors.primaryColor; 
   }
 
-  // Método para obtener el color de la línea de escaneo
   Color _getScanLineColor(dynamic controller) {
    
-    return AdminColors.colorAccionButtons; // Color por defecto
+    return AdminColors.colorAccionButtons; 
   }
 
-  // Método para obtener el color de los botones
   Color _getButtonColor(dynamic controller) {
   
-    return AdminColors.primaryColor; // Color por defecto
+    return AdminColors.primaryColor; 
   }
 
-  // Método auxiliar para obtener el estado de la linterna de forma segura
   bool _getTorchState(dynamic controller) {
     try {
       final torchValue = controller.isTorchOn;
@@ -341,7 +320,6 @@ class QRScannerWidget extends StatelessWidget {
     }
   }
 
-  // Método auxiliar para obtener el scanner controller de forma segura
   Rx<MobileScannerController?>? _getQRScannerController(dynamic controller) {
     try {
       return controller.qrScannerController;
@@ -351,7 +329,6 @@ class QRScannerWidget extends StatelessWidget {
   }
 }
 
-// Clase para animar la línea de escaneo
 class ScannerAnimation extends StatefulWidget {
   final double width;
   final Color color;

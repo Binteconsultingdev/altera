@@ -9,6 +9,7 @@ class PendingOrdersModel extends PendingOrdersEntity {
     required super.id_cliente,
     required super.pendientes,
     required super.clienteEntity,
+    required super.concepto
   });
 
   PendingOrdersModel.fromJson(Map<String, dynamic> json)
@@ -19,6 +20,7 @@ class PendingOrdersModel extends PendingOrdersEntity {
           fecha: json['fecha'],
           id_cliente: json['id_cliente'].toString(),
           pendientes: json['pendientes'].toString(),
+          concepto: json['concepto']??'',
           clienteEntity: json['cliente']!= null ? ClienteEntity(
             id: json['cliente']['id']??'', 
             cliente: json['cliente']['cliente']??'', 
@@ -33,7 +35,8 @@ class PendingOrdersModel extends PendingOrdersEntity {
           fecha: entity.fecha,
           id_cliente: entity.id_cliente,
           pendientes: entity.pendientes,
-          clienteEntity: ClienteEntity(id: entity.clienteEntity.id, cliente: entity.clienteEntity.cliente, codigo: entity.clienteEntity.codigo)
+          clienteEntity: ClienteEntity(id: entity.clienteEntity.id, cliente: entity.clienteEntity.cliente, codigo: entity.clienteEntity.codigo),
+          concepto: entity.concepto
         );
 
   Map<String, dynamic> toJson() {
@@ -49,6 +52,7 @@ class PendingOrdersModel extends PendingOrdersEntity {
         'cliente':clienteEntity.cliente,
         'codigo':clienteEntity.codigo
       }
+      ,'concepto':concepto
     };
   }
 

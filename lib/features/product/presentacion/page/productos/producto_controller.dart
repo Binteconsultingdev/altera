@@ -160,22 +160,27 @@ class ProductosController extends GetxController {
       guardarProductos();
     }
   }
-
+  
   String? _validateProductForEntry(EntryEntity producto) {
-    int tipoId = producto.tipo?.id ?? 0;
-    switch (tipoId) {
-      case 2:
-        return 'No se puede procesar para entrada';
-      case 3:
-        return 'Papeleta no cumple con los requisitos para entrada';
-      case 4:
-        return 'Papeleta eliminada - No disponible';
-       case 5:
-        return 'Papeleta no cumple con los requisitos para entrada';
-      default:
-        return null;
-    }
+  int tipoId = producto.tipo?.id ?? 0;
+
+  switch (tipoId) {
+    case 2:
+      return 'Papeleta corresponde a salida o surtido, no aplica para entrada';
+    case 3:
+      return 'Papeleta no cumple con los requisitos para entrada';
+    case 4:
+      return 'Papeleta eliminada - No disponible';
   }
+
+  if (producto.sugerencias?.sugerencia_entrada == null ||
+      producto.sugerencias!.sugerencia_entrada <= 0) {
+    return 'La papeleta no cuenta con stock suficiente para entrada';
+  }
+
+  return null;
+}
+
 
   Future<void> cargarProductosGuardados() async {
     try {
@@ -315,7 +320,6 @@ class ProductosController extends GetxController {
         puntos: json['puntos'] ?? '',
         ordenCompra: json['orden_compra'] ?? '',            
         observaciones: json['observaciones'] ?? '',
-        totalPiezasPorPalletSurtidas: json['total_piezas_por_pallet_surtidas'] ?? 0,
 
         tipo: json['tipo'] != null && json['tipo'] is Map<String, dynamic>
             ? TipoEntity(
@@ -323,6 +327,22 @@ class ProductosController extends GetxController {
                 tipo: json['tipo']['tipo'] ?? '',
               )
             : TipoEntity(id: 0, tipo: 'Desconocido'),
+          sugerencias: json['sugerencias'] != null && json['sugerencias'] is Map<String, dynamic>
+            ? Sugerencias(
+                sugerencia_entrada: json['sugerencias']['sugerencia_entrada'] ?? '',
+                sugerencia_surtir: json['sugerencias']['sugerencia_surtir'] ?? '',
+              )
+            : Sugerencias(sugerencia_entrada: 0, sugerencia_surtir: 0),
+        summarystorage: json['resumen_mi_almacen'] != null && json['resumen_mi_almacen'] is Map<String, dynamic>
+            ? Summarystorage(
+                entradas: json['resumen_mi_almacen']['entradas'] ?? 0,
+                surtimientos: json['resumen_mi_almacen']['surtimientos'] ?? 0,
+                eliminaciones: json['resumen_mi_almacen']['eliminaciones'] ?? 0,
+                salidas: json['resumen_mi_almacen']['salidas'] ?? 0,
+                cancelaciones: json['resumen_mi_almacen']['cancelaciones'] ?? 0,
+                stock_en_mi_almacen: json['resumen_mi_almacen']['stock_en_mi_almacen'] ?? 0,
+              )
+            : Summarystorage(entradas: 0, surtimientos: 0, eliminaciones: 0, salidas: 0, cancelaciones: 0, stock_en_mi_almacen: 0),
         producto: json['producto'] != null && json['producto'] is Map<String, dynamic>
             ? ProductEntity(
                 id: json['producto']['id'] ?? 0,
@@ -659,22 +679,28 @@ void _notificarActualizacionLabels() {
   Future<void> _agregarProductoPorQR(String idStr) async {
     try {
       if (isLoading.value) {
-        print('⚠️ Ya se está procesando un QR, ignorando...');
         return;
       }
       isLoading.value = true;
       int id = int.parse(idStr);
-      print('🔍 Llamando al caso de uso con ID: $id');
       List<EntryEntity> productosDisponibles = await _getEntryUsecase.execute(id.toString());
-      print('🔍 Productos disponibles encontrados: ${productosDisponibles.length}');
       if (productosDisponibles.isNotEmpty) {
         EntryEntity productoDisponible = productosDisponibles.first;
-        print('🔍 Producto encontrado - ID: ${productoDisponible.id}, Tipo: ${productoDisponible.tipo?.id}');
         String? errorMessage = _validateProductForEntry(productoDisponible);
         if (errorMessage != null) {
           _showErrorAlert('Producto no válido', '$errorMessage\n\nESTATUS: ${productoDisponible.tipo?.tipo}');
           return;
         }
+
+
+
+          if (productoDisponible.sugerencias?.sugerencia_entrada != null &&
+    productoDisponible.sugerencias!.sugerencia_entrada <= 0) {
+  _showErrorAlert('Sin stock', 'La papeleta no cuenta con stock suficiente para entrada.');
+  return;
+}
+
+
         int index = productosCarrito.indexWhere((p) => p.id == productoDisponible.id);
         if (index >= 0) {
           _showErrorAlert('Ups', 'Producto ya agregado');

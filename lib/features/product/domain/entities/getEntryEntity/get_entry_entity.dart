@@ -30,6 +30,15 @@ class UsuarioEntity {
     required this.usuario,
   });
 }
+class Sugerencias{
+  final int sugerencia_entrada;
+  final int sugerencia_surtir;
+
+  Sugerencias({
+    required this.sugerencia_entrada,
+    required this.sugerencia_surtir,
+  });
+}
 class EntryEntity {
   final int id;
   final int idEntrada;
@@ -48,7 +57,8 @@ class EntryEntity {
   final TipoEntity tipo;
   final ProductEntity producto;
   final List<LogEntity> logs;
-  final int totalPiezasPorPalletSurtidas ;
+  final Sugerencias sugerencias;
+  final Summarystorage summarystorage;
   EntryEntity({
     required this.id,
     required this.idEntrada,
@@ -67,10 +77,27 @@ class EntryEntity {
     required this.tipo,
     required this.producto,
     required this.logs, 
-    required this.totalPiezasPorPalletSurtidas,
+    required this.sugerencias,
+    required this.summarystorage,
   });
 }
+class Summarystorage{
+  final int entradas;
+  final int surtimientos;
+  final int eliminaciones;
+  final int salidas;
+  final int cancelaciones;
+  final int stock_en_mi_almacen;
+  Summarystorage({
+    required this.entradas,
+    required this.surtimientos,
+    required this.eliminaciones,
+    required this.salidas,
+    required this.cancelaciones,
+    required this.stock_en_mi_almacen,
+  });
 
+}
 class TipoEntity {
   final int id;
   final String tipo;

@@ -7,6 +7,7 @@ class PendingOrdersEntity {
   final String id_cliente; 
   final String pendientes;
   final ClienteEntity clienteEntity;
+  final String concepto;
   PendingOrdersEntity({
     required this.id,
     required this.serie,
@@ -14,7 +15,8 @@ class PendingOrdersEntity {
     required this.fecha,
     required this.id_cliente,
     required this.pendientes,
-    required this.clienteEntity
+    required this.clienteEntity,
+    required this.concepto
   });
 
 }

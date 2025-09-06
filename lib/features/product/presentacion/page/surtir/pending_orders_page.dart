@@ -306,6 +306,10 @@ class PendingOrdersScreen extends StatelessWidget {
                             'Código: ${order.clienteEntity.codigo}',
                             style: AdminColors.bodySmall,
                           ),
+                           Text(
+                            '${order.concepto}',
+                            style: AdminColors.bodySmall,
+                          ),
                         ],
                       ),
                     ),

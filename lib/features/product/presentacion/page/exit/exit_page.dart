@@ -866,6 +866,13 @@ void _showDelete(EntryEntity producto) {
                       fontStyle: FontStyle.italic,
                     ),
                   ),
+                  Text('salida: ${producto.sugerencias.sugerencia_surtir}', 
+                    style: TextStyle(
+                      color: AdminColors.textSecondaryColor,
+                      fontSize: 12,
+                      fontStyle: FontStyle.italic,
+                    ),
+                  ),
                   
                   SizedBox(height: 8),
                 ],
