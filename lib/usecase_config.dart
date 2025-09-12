@@ -29,7 +29,6 @@ class UsecaseConfig {
   SurtirProductosUsecase? surtirProductosUsecase;
   
   GetProductoUsecase? getProductoUsecase;
-  DeleteBallotUsecase? deleteBallotUsecase;
   GetLabelsUsecase? getLabelsUsecase;
   GetPendingordersUsecase?getPendingordersUsecase;
   GetOrdersUsecase? getOrdersUsecase;
@@ -45,7 +44,6 @@ class UsecaseConfig {
     addExitUsecase=AddExitUsecase(productRepository: productRepositoryImp!);
     getProductoUsecase=GetProductoUsecase(repository: productRepositoryImp!);
     surtirProductosUsecase=SurtirProductosUsecase(productRepository: productRepositoryImp!);
-    deleteBallotUsecase=DeleteBallotUsecase(productRepository: productRepositoryImp!);
     getLabelsUsecase=GetLabelsUsecase(repository: productRepositoryImp!);
     getPendingordersUsecase=GetPendingordersUsecase(repository: productRepositoryImp!);
     getOrdersUsecase = GetOrdersUsecase(productRepository: productRepositoryImp!);

@@ -25,14 +25,14 @@ class PendingOrdersController extends GetxController {
   final GetOrdersUsecase getOrdersUsecase;
   final GetProductoUsecase getProductoUsecase;
   final SurtirProductosUsecase surtirProductosUsecase;
-  final DeleteBallotUsecase deleteBallotUsecase; 
+  //final DeleteBallotUsecase deleteBallotUsecase; 
 
   PendingOrdersController({
     required this.getPendingOrdersUseCase, 
     required this.getOrdersUsecase,
     required this.getProductoUsecase,
     required this.surtirProductosUsecase,
-    required this.deleteBallotUsecase,
+   // required this.deleteBallotUsecase,
   });
 
   final RxList<PendingOrdersEntity> _pendingOrders = <PendingOrdersEntity>[].obs;
@@ -132,35 +132,6 @@ final Map<int, int> _piezasPorPalletOriginales = {};
     return PoshProductEntity(
       id: entry.id,
     );
-  }
-Future<void> eliminarPapeleta(EntryEntity producto) async {
-    try {
-      _isProcessingSurtido.value = true; 
-      
-      PoshProductEntity poshProduct = _entryEntityToPoshProductEntity(producto);
-      List<PoshProductEntity> productosAEliminar = [poshProduct];
-      await deleteBallotUsecase.execute(productosAEliminar);
-      
-      _showSuccessAlert('¡Eliminado!', 'La papeleta ha sido eliminada permanentemente');
-      
-      if (_currentOrderId.value != 0) {
-        removerProductoEscaneado(producto);
-      }
-      
-      if (_selectedOrder.value != null) {
-        await loadOrderDetails(_selectedOrder.value!.id);
-        
-      }
-      _notificarActualizacionLabels();
-      print('✅ Papeleta eliminada exitosamente');
-      
-    } catch (e) {
-      print('❌ Error al eliminar papeleta: $e');
-      String cleanMessage = cleanExceptionMessage(e);
-      _showErrorAlert('Error al eliminar', cleanMessage);
-    } finally {
-      _isProcessingSurtido.value = false;
-    }
   }
 
 

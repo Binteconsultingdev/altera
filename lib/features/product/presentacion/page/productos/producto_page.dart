@@ -416,24 +416,7 @@ class ProductosPage extends StatelessWidget {
                               
                               SizedBox(height: 24),
                               
-                             /* Container(
-                                width: double.infinity,
-                                child: ElevatedButton.icon(
-                                  onPressed: () {
-                                    showDeleteConfirmation(producto);
-                                  },
-                                  icon: Icon(Icons.delete),
-                                  label: Text("ELIMINAR PRODUCTO"),
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: AdminColors.errorColor,
-                                    foregroundColor: AdminColors.colordCard,
-                                    padding: EdgeInsets.symmetric(vertical: 15),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                  ),
-                                ),
-                              ),*/
+                            
                             ],
                           ),
                         ),
@@ -574,24 +557,6 @@ void _showDelete(EntryEntity producto) {
     },
   );
 }
-
-  void showDeleteConfirmation(EntryEntity producto) {
-    showCustomAlert(
-      context: Get.context!,
-      title: "Confirmar eliminación",
-      message: "¿Está seguro de desechar esta papeleta? No podrá volver a escanearla",
-      confirmText: "ELIMINAR",
-      cancelText: "CANCELAR",
-      type: CustomAlertType.error, 
-      onConfirm: () {
-        Get.back();
-        controller.eliminarProductoDefinitivamente(producto);
-      },
-      onCancel: () {
-        Get.back();
-      },
-    );
-  }
 
   Widget _buildHeader() {
     return Column(

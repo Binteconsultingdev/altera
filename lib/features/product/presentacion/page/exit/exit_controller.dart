@@ -22,7 +22,7 @@ class ExitController extends GetxController {
   final PreferencesUser _prefsUser = PreferencesUser();
   final AddExitUsecase _exitUsecase;
   final GetProductoUsecase _getEntryUsecase;
-  final DeleteBallotUsecase _deleteBallotUsecase;
+  //final DeleteBallotUsecase _deleteBallotUsecase;
   
   final RxList<EntryEntity> productosCarrito = <EntryEntity>[].obs;
   final RxList<EntryEntity> productosDisponibles = <EntryEntity>[].obs;
@@ -55,10 +55,10 @@ class ExitController extends GetxController {
   ExitController({
     required AddExitUsecase exitUsecase,
     required GetProductoUsecase getEntryUsecase,
-    required DeleteBallotUsecase deleteBallotUsecase,
+   // required DeleteBallotUsecase deleteBallotUsecase,
   }) : _exitUsecase = exitUsecase,
-       _getEntryUsecase = getEntryUsecase,
-       _deleteBallotUsecase = deleteBallotUsecase;
+       _getEntryUsecase = getEntryUsecase;
+     //  _deleteBallotUsecase = deleteBallotUsecase;
 
   double get subtotal => productosCarrito.length.toDouble();
   double get total => subtotal;
@@ -597,28 +597,7 @@ void _notificarActualizacionLabels() {
     print('🗑️ Producto removido de la lista local. Quedan: ${productosCarrito.length} productos');
   }
 
-  Future<void> eliminarProductoDefinitivamente(EntryEntity producto) async {
-    try {
-      isLoading.value = true;
-      print('🗑️ Eliminando producto definitivamente con ID: ${producto.id}');
-      PoshProductEntity poshProduct = _entryEntityToPoshProductEntity(producto);
-      List<PoshProductEntity> productosAEliminar = [poshProduct];
-      await _deleteBallotUsecase.execute(productosAEliminar);
-      productosCarrito.remove(producto);
-      productosCarrito.refresh();
-      guardarProductos();
-       _notificarActualizacionLabels();
-      _showSuccessAlert(
-        '¡Eliminado!', 
-        'Producto eliminado definitivamente del sistema'
-      );
-    } catch (e) {
-      print('❌ Error al eliminar producto definitivamente: $e');
-      _showErrorAlert('No se puedo eliminar', 'La papeleta ya fue eliminada previamente');
-    } finally {
-      isLoading.value = false;
-    }
-  }
+
 
   void limpiarCarrito() {
     productosCarrito.clear();

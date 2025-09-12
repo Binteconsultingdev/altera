@@ -49,15 +49,6 @@ class ProductRepositoryImp  implements ProductRepository{
 
 
   @override
-  Future<void> deleteBallot(List<PoshProductEntity> poshProductList) async {
-    final Session = await authService.getToken();
-    if (Session == null){
-      throw Exception('No hay sesión activa. El usuario debe iniciar sesión.');
-    }
-    return productSourcesImp.deleteBallot(poshProductList, Session);
-  }
-  
-  @override
   Future<List<LabelEntity>> getLabels() async {
  final Session = await authService.getToken();
     if (Session == null){

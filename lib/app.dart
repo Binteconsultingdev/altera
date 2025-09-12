@@ -31,7 +31,7 @@ class App extends StatelessWidget {
         Get.put(usecaseConfig.addEntryUsecase!,permanent: true) ;
         Get.put(usecaseConfig.getProductoUsecase!,permanent: true) ;
         Get.put(usecaseConfig.surtirProductosUsecase!,permanent: true) ;
-        Get.put(usecaseConfig.deleteBallotUsecase!,permanent: true);
+     
         Get.put(usecaseConfig.getLabelsUsecase!,permanent: true);
         Get.put(usecaseConfig.getPendingordersUsecase!,permanent: true);
         Get.put(usecaseConfig.getOrdersUsecase!,permanent: true);
@@ -40,11 +40,11 @@ class App extends StatelessWidget {
 
         Get.put(SplashController(userdataUsecase: Get.find(),) );
         Get.lazyPut(() => LoginController(signinUsecase: Get.find()), fenix: true);
-        Get.lazyPut(()=>ProductosController(addEntryUsecase:  Get.find(), getEntryUsecase: Get.find(), deleteBallotUsecase: Get.find()),fenix: true,);
+        Get.lazyPut(()=>ProductosController(addEntryUsecase:  Get.find(), getEntryUsecase: Get.find()),fenix: true,);
         Get.lazyPut(()=>PerfilController(userdataUsecase: Get.find()),fenix: true);
         Get.lazyPut(() => LabelController(getLabelsUsecase: Get.find()), fenix: true);
-        Get.lazyPut(()=>PendingOrdersController(getPendingOrdersUseCase:Get.find(), getOrdersUsecase: Get.find(), getProductoUsecase: Get.find(), surtirProductosUsecase: Get.find(), deleteBallotUsecase: Get.find()),fenix: true);
-        Get.lazyPut(()=>ExitController(exitUsecase: Get.find(), getEntryUsecase: Get.find(), deleteBallotUsecase: Get.find()),fenix: true);
+        Get.lazyPut(()=>PendingOrdersController(getPendingOrdersUseCase:Get.find(), getOrdersUsecase: Get.find(), getProductoUsecase: Get.find(), surtirProductosUsecase: Get.find(), ),fenix: true);
+        Get.lazyPut(()=>ExitController(exitUsecase: Get.find(), getEntryUsecase: Get.find(),),fenix: true);
       }),
       
       initialRoute: RoutesNames.splashPage, 

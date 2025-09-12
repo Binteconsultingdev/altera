@@ -230,50 +230,6 @@ Future<void> addEntry(List<PoshProductEntity> poshProductList, String token) asy
 }
 
 
-Future<void> deleteBallot(List<PoshProductEntity> poshProductList, String token) async {
-  try {
-    Uri url = Uri.parse('$defaultApiServer/entradas/papeleta/eliminar');
-    
-    if (poshProductList.isEmpty) {
-      throw Exception('No hay productos para eliminar');
-    }
-    
-    Map<String, dynamic> jsonObject = {"id": poshProductList.first.id};
-    
-    print('🔍 JSON enviado (objeto simple): ${jsonEncode(jsonObject)}');
-    
-    final response = await http.put(
-      url,
-      headers: <String, String>{
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $token'
-      },
-      body: jsonEncode(jsonObject),
-    );
-
-    print('🔍 Status code recibido: ${response.statusCode}');
-    print('🔍 Response body: ${response.body}');
-
-    if (response.statusCode == 200) {
-      final dataUTF8 = utf8.decode(response.bodyBytes);
-      final responseDecode = jsonDecode(dataUTF8)['data'];
-      return responseDecode;
-    }
-
-    ApiExceptionCustom exception = ApiExceptionCustom(response: response);
-    exception.validateMesage(); 
-    throw exception;
-    
-  } catch (e) {
-      if (e is SocketException || e is http.ClientException || e is TimeoutException) {
-
-        throw Exception(convertMessageException(error: e));
-      }
-      throw Exception('$e');
-  }
-}
-
-
  Future<List<PendingOrdersEntity >> getPendingorders({required String token,required String date}) async {
     try {
       Uri url = Uri.parse('$defaultApiServer/pedidos/pendientes').replace(

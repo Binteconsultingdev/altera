@@ -14,7 +14,6 @@ Future<void> poshEntry(List<PoshProductEntity> poshProductList);
 Future<void> poshExit(List<PoshProductEntity> poshProductList);
 
 Future<List<EntryEntity>> getEntry(String idProducto);
-Future<void>deleteBallot(List<PoshProductEntity> poshProductList);
 Future<List<LabelEntity>> getLabels();
 Future<List<PendingOrdersEntity>> getPendingorders({required String date});
  Future<OrdersEntity>  getorders({required int id});
