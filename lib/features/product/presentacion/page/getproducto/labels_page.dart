@@ -3,9 +3,6 @@ import 'package:altera/features/product/presentacion/page/getproducto/entry_cont
 import 'package:altera/common/widgets/labels_loading.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:altera/features/product/domain/entities/getEntryEntity/get_entry_entity.dart';
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:altera/features/product/domain/entities/labelEntity/Label_entity.dart';
 
 class LabelScreen extends StatelessWidget {
@@ -169,8 +166,8 @@ class LabelScreen extends StatelessWidget {
         onRefresh: () => controller.refreshLabels(),
         color: AdminColors.primaryColor,
         backgroundColor: Colors.white,
-        displacement: 40.0, // Distancia desde la parte superior
-        strokeWidth: 2.0,   // Grosor del indicador
+        displacement: 40.0, 
+        strokeWidth: 2.0,  
         child: ListView.builder(
           physics: const AlwaysScrollableScrollPhysics(),
           itemCount: controller.filteredLabels.length,

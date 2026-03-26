@@ -1047,9 +1047,7 @@ class OrderDetailsPage extends StatelessWidget {
                           decoration: BoxDecoration(
                             color: AdminColors.errorColor.withOpacity(0.2),
                             borderRadius: BorderRadius.only(
-                              topRight: producto.tipo?.id == 1
-                                  ? Radius.circular(16)
-                                  : Radius.zero,
+                              topRight: Radius.circular(16),
                               bottomRight: Radius.circular(16),
                             ),
                           ),
@@ -1348,16 +1346,7 @@ class OrderDetailsPage extends StatelessWidget {
         bottom: AdminColors.paddingMedium +
             MediaQuery.of(Get.context!).padding.bottom,
       ),
-      decoration: BoxDecoration(
-        color: AdminColors.surfaceColor,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 4,
-            offset: Offset(0, -2),
-          ),
-        ],
-      ),
+   
       child: Obx(() {
         if (controller.productosEscaneados.isNotEmpty) {
           return Row(

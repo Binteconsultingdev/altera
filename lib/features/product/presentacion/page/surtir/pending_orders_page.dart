@@ -24,7 +24,7 @@ class PendingOrdersScreen extends StatelessWidget {
           _buildSearchBar(controller),
           Expanded(
             child: Obx(() {
-              if (controller.isLoading) {
+              if (controller.isLoadingOrders) {
                 return LabelsLoading();
               }
               

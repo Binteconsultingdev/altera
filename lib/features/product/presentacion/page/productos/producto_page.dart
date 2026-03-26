@@ -55,21 +55,22 @@ class ProductosPage extends StatelessWidget {
           ),
           
           Obx(() {
-            if (controller.isScanning.value) {
+            if (controller.isScanning) {
               return _buildScannerOverlay();
             }
             return SizedBox.shrink();
           }),
 
           Obx(() {
-            if (controller.showingManualInput.value) {
+            if (controller.showingManualInput) {
               return _buildManualInputOverlay();
             }
             return SizedBox.shrink();
           }),
           
           Obx(() {
-            if (controller.showingProductDetails.value && controller.selectedProductForDetails.value != null) {
+            if (controller.showingProductDetails && controller.selectedProductForDetails != null) {
+
               return _buildProductDetailsOverlay();
             }
             return SizedBox.shrink();
@@ -197,7 +198,7 @@ class ProductosPage extends StatelessWidget {
                               if (value.trim().length >= 1 && RegExp(r'^\d+$').hasMatch(value.trim())) {
                                 Future.delayed(Duration(milliseconds: 500), () {
                                   if (controller.manualIdController.text.trim() == value.trim() && 
-                                      !controller.isProcessingManualId.value) {
+                                      !controller.isProcessingManualId) {
                                     controller.procesarIdManual();
                                   }
                                 });
@@ -242,7 +243,7 @@ class ProductosPage extends StatelessWidget {
                           Expanded(
                             flex: 2,
                             child: Obx(() => ElevatedButton(
-                              onPressed: controller.isProcessingManualId.value
+                              onPressed: controller.isProcessingManualId
                                   ? null
                                   : () {
                                       controller.procesarIdManual();
@@ -255,7 +256,7 @@ class ProductosPage extends StatelessWidget {
                                   borderRadius: BorderRadius.circular(12),
                                 ),
                               ),
-                              child: controller.isProcessingManualId.value
+                              child: controller.isProcessingManualId
                                   ? Row(
                                       mainAxisAlignment: MainAxisAlignment.center,
                                       children: [
@@ -294,7 +295,7 @@ class ProductosPage extends StatelessWidget {
   }
 
   Widget _buildProductDetailsOverlay() {
-    final producto = controller.selectedProductForDetails.value!;
+    final producto = controller.selectedProductForDetails!;
     
     return Positioned.fill(
       child: SafeArea(
