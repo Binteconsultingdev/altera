@@ -59,7 +59,6 @@ class ProductosController extends BaseProductController {
         return;
       }
       
-      // Validación de productos
       List<EntryEntity> productosInvalidos = [];
       for (EntryEntity producto in productosCarrito) {
         String? error = validateProductForOperation(producto);

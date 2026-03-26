@@ -42,7 +42,6 @@ class _SplashPageState extends State<SplashPage> with SingleTickerProviderStateM
       ),
     );
     
-    // Iniciar animación
     _animationController.forward();
   }
 
@@ -78,7 +77,6 @@ class _SplashPageState extends State<SplashPage> with SingleTickerProviderStateM
               );
             }),
             
-            // Contenido central con animación
             Center(
               child: AnimatedBuilder(
                 animation: _animationController,
@@ -134,7 +132,6 @@ class _SplashPageState extends State<SplashPage> with SingleTickerProviderStateM
                           ),
                           const SizedBox(height: 60),
                           
-                          // Indicador de carga
                           SizedBox(
                             width: 40,
                             height: 40,

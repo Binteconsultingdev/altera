@@ -32,14 +32,12 @@ class InicioPage extends StatelessWidget {
             ),
           ),
           
-          // Overlay de diseño
           Positioned.fill(
             child: CustomPaint(
               painter: CurvePainter(),
             ),
           ),
           
-          // Contenido principal
           SafeArea(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20.0),
@@ -48,24 +46,19 @@ class InicioPage extends StatelessWidget {
                 children: [
                   const SizedBox(height: 16),
                   
-                  // Header de la aplicación con perfil y notificaciones
                 
                   const SizedBox(height: 30),
                   
-                  // Welcome message con estilo premium
                   
                   const SizedBox(height: 30),
                   
-                  // Carrusel de alta calidad
                   
                   const SizedBox(height: 35),
                   
-                  // Navegación por categorías con estilo glass-morphism
                   _buildGlassmorphicNavigation(context),
                   
                   const SizedBox(height: 25),
                   
-                  // Contenido principal con scroll
                   Expanded(
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(24),
@@ -246,7 +239,6 @@ class InicioPage extends StatelessWidget {
       height: 200,
       child: Obx(() => Stack(
         children: [
-          // Imagen del carrusel con efectos de fondo
           Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(24),
@@ -263,7 +255,6 @@ class InicioPage extends StatelessWidget {
               borderRadius: BorderRadius.circular(24),
               child: Stack(
                 children: [
-                  // Imagen principal
                   Image.network(
                     controller.imageUrls[controller.currentIndex.value],
                     height: 200,
@@ -276,7 +267,6 @@ class InicioPage extends StatelessWidget {
                         ),
                   ),
                   
-                  // Overlay de gradiente
                   Container(
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
@@ -292,7 +282,6 @@ class InicioPage extends StatelessWidget {
                     ),
                   ),
                   
-                  // Overlay de patrón
                   Opacity(
                     opacity: 0.3,
                     child: Container(
@@ -309,7 +298,6 @@ class InicioPage extends StatelessWidget {
             ),
           ),
           
-          // Texto e información
           Positioned(
             bottom: 20,
             left: 20,
@@ -363,7 +351,6 @@ class InicioPage extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    // Métricas de la rutina
                     Row(
                       children: [
                         _buildMetricContainer("45", "MIN"),
@@ -372,7 +359,6 @@ class InicioPage extends StatelessWidget {
                       ],
                     ),
                     
-                    // Botón iniciar
                     ElevatedButton(
                       onPressed: controller.cambioAPantallaRutinas,
                       style: ElevatedButton.styleFrom(

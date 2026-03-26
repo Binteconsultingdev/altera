@@ -16,7 +16,6 @@ abstract class BaseProductController extends GetxController {
   final PreferencesUser _prefsUser = PreferencesUser();
   final GetProductoUsecase getProductoUsecase;
   
-  // Estado compartido
   final RxList<EntryEntity> productosCarrito = <EntryEntity>[].obs;
   final RxList<EntryEntity> productosDisponibles = <EntryEntity>[].obs;
   final RxList<EntryEntity> filteredProducts = <EntryEntity>[].obs;
@@ -26,7 +25,6 @@ abstract class BaseProductController extends GetxController {
   final RxInt currentTab = 0.obs;
   final RxString searchQuery = ''.obs;
 
-  // Scanner QR - Variables privadas con getters públicos
   Rx<MobileScannerController?> qrScannerController = Rx<MobileScannerController?>(null);
   final RxBool _isScanning = false.obs;
   final RxBool _isTorchOn = false.obs;
@@ -35,22 +33,18 @@ abstract class BaseProductController extends GetxController {
   DateTime? _lastScanTime;
   final int _scanCooldownMs = 2000;
 
-  // Búsqueda para eliminar
   final RxBool isSearchingToDelete = false.obs;
   final RxString searchToDeleteQuery = ''.obs;
   final RxList<EntryEntity> filteredProductsToDelete = <EntryEntity>[].obs;
   final TextEditingController searchToDeleteController = TextEditingController();
 
-  // Detalles de producto - Variables privadas con getters públicos
   final RxBool _showingProductDetails = false.obs;
   final Rx<EntryEntity?> _selectedProductForDetails = Rx<EntryEntity?>(null);
 
-  // Input manual - Variables privadas con getters públicos
   final RxBool _showingManualInput = false.obs;
   final TextEditingController manualIdController = TextEditingController();
   final RxBool _isProcessingManualId = false.obs;
 
-  // ==================== GETTERS PÚBLICOS ====================
   
   bool get isScanning => _isScanning.value;
   bool get isTorchOn => _isTorchOn.value;
@@ -63,7 +57,6 @@ abstract class BaseProductController extends GetxController {
     required this.getProductoUsecase,
   });
 
-  // Métodos abstractos que cada hijo debe implementar
   String get storageKey;
   String? validateProductForOperation(EntryEntity producto);
   Future<void> guardarProductosEnRepositorio();
@@ -100,7 +93,6 @@ abstract class BaseProductController extends GetxController {
     }
   }
 
-  // ==================== MÉTODOS DE INPUT MANUAL ====================
   
   void mostrarInputManual() {
     _showingManualInput.value = true;
@@ -137,7 +129,6 @@ abstract class BaseProductController extends GetxController {
     }
   }
 
-  // ==================== MÉTODOS DE DETALLES ====================
   
   void mostrarDetallesProducto(EntryEntity producto) {
     _selectedProductForDetails.value = producto;
@@ -151,7 +142,6 @@ abstract class BaseProductController extends GetxController {
     print('❌ Cerrando detalles del producto');
   }
 
-  // ==================== MÉTODOS DE BÚSQUEDA ====================
   
   void searchProducts(String query) {
     searchQuery.value = query;
@@ -197,7 +187,6 @@ abstract class BaseProductController extends GetxController {
     }
   }
 
-  // ==================== MÉTODOS DE SCANNER QR ====================
   
   void iniciarEscaneoQR() {
     _isScanning.value = true;
@@ -259,7 +248,6 @@ abstract class BaseProductController extends GetxController {
     }
   }
 
-  // ==================== MÉTODOS DE PERSISTENCIA ====================
   
   Future<void> cargarProductosGuardados() async {
     try {
@@ -330,13 +318,11 @@ abstract class BaseProductController extends GetxController {
             .cast<EntryEntity>()
             .toList();
         
-        // ⭐ NUEVA VALIDACIÓN: Verificar cada producto con la API
         List<EntryEntity> productosValidos = [];
         List<EntryEntity> productosInvalidos = [];
         
         for (EntryEntity productoLocal in productos) {
           try {
-            // Consultar el producto actualizado desde la API
             List<EntryEntity> productosActualizados = await getProductoUsecase.execute(
               productoLocal.idProducto.toString()
             );
@@ -344,41 +330,34 @@ abstract class BaseProductController extends GetxController {
             if (productosActualizados.isNotEmpty) {
               EntryEntity productoActualizado = productosActualizados.first;
               
-              // Validar con los datos actualizados
               String? errorValidacion = validateProductForOperation(productoActualizado);
               
               if (errorValidacion == null) {
-                // Producto válido: usar datos actualizados
                 productosValidos.add(productoActualizado);
                 print('✅ Producto ${productoActualizado.idProducto} válido y actualizado');
               } else {
-                // Producto inválido
                 productosInvalidos.add(productoLocal);
                 print('⚠️ Producto ${productoLocal.idProducto} no válido: $errorValidacion');
               }
             } else {
-              // Producto no encontrado en API
               productosInvalidos.add(productoLocal);
               print('⚠️ Producto ${productoLocal.idProducto} no encontrado en API');
             }
           } catch (e) {
-            // Error al consultar este producto específico
+           
             print('❌ Error al validar producto ${productoLocal.idProducto}: $e');
             productosInvalidos.add(productoLocal);
           }
         }
         
-        // Actualizar carrito solo con productos válidos
         productosCarrito.clear();
         productosCarrito.addAll(productosValidos);
         productosCarrito.refresh();
         
-        // Guardar lista limpia
         await guardarProductos();
         
         print('✅ Productos válidos cargados: ${productosValidos.length}');
         
-        // Notificar al usuario si hubo productos eliminados
         if (productosInvalidos.isNotEmpty) {
           print('⚠️ Productos inválidos eliminados: ${productosInvalidos.length}');
          
@@ -442,7 +421,6 @@ abstract class BaseProductController extends GetxController {
     }
   }
 
-  // ==================== SERIALIZACIÓN ====================
   
   Map<String, dynamic>? entryEntityToJson(EntryEntity entry) {
     try {
@@ -543,7 +521,6 @@ abstract class BaseProductController extends GetxController {
     }
   }
 
-  // ==================== MÉTODOS DE CARRITO ====================
   
   Future<void> agregarProductoPorQR(String idStr) async {
     try {
@@ -600,7 +577,6 @@ abstract class BaseProductController extends GetxController {
     });
   }
 
-  // ==================== NOTIFICACIONES ====================
   
   void notificarActualizacionLabels() {
     try {
@@ -615,7 +591,6 @@ abstract class BaseProductController extends GetxController {
     }
   }
 
-  // ==================== ALERTAS ====================
   
   void showErrorAlert(String title, String message, {VoidCallback? onDismiss}) {
     if (Get.context != null) {

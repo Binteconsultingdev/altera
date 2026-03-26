@@ -13,7 +13,6 @@ class PreferencesUser {
   SharedPreferences? _prefs;
   bool _isInitialized = false;
 
-  // ✅ MÉTODO MEJORADO: Asegurar inicialización antes de usar
   Future<void> _ensureInitialized() async {
     if (!_isInitialized || _prefs == null) {
       await initiPrefs();
@@ -32,7 +31,6 @@ class PreferencesUser {
     }
   }
 
-  // ✅ MÉTODO MEJORADO: Guardar con inicialización automática
   Future<void> savePrefs({
     required dynamic type, 
     required String key, 
@@ -72,7 +70,6 @@ class PreferencesUser {
     }
   }
 
-  // ✅ MÉTODO MEJORADO: Cargar con inicialización automática
   Future<dynamic> loadPrefs({
     required dynamic type, 
     required String key
@@ -149,10 +146,8 @@ class PreferencesUser {
     }
   }
 
-  // ✅ NUEVO: Método para verificar si está inicializado
   bool get isInitialized => _isInitialized && _prefs != null;
 
-  // ✅ NUEVO: Método para obtener todas las claves (útil para debugging)
   Future<Set<String>> getAllKeys() async {
     try {
       await _ensureInitialized();

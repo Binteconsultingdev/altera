@@ -161,7 +161,6 @@ class LabelScreen extends StatelessWidget {
         );
       }
 
-      // Lista principal con RefreshIndicator
       return RefreshIndicator(
         onRefresh: () => controller.refreshLabels(),
         color: AdminColors.primaryColor,

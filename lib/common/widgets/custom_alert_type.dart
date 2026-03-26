@@ -16,7 +16,7 @@ class CustomAlertDialog extends StatelessWidget {
   final String? imagePath;
   final CustomAlertType type;
   final Widget? customWidget;
-  // Campos adicionales para el tipo info
+  
   final String? driverName;
   final String? rating;
   final String? carModel;
@@ -86,7 +86,7 @@ class CustomAlertDialog extends StatelessWidget {
         children: [
           Row(
             children: [
-              // Foto de perfil con calificación
+              
               Stack(
                 children: [
                   CircleAvatar(
@@ -126,7 +126,7 @@ class CustomAlertDialog extends StatelessWidget {
                 ],
               ),
               const SizedBox(width: 15),
-              // Información del conductor
+              
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -158,7 +158,7 @@ class CustomAlertDialog extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 20),
-          // Información del vehículo
+          
           Container(
             padding: const EdgeInsets.all(15),
             decoration: BoxDecoration(
@@ -243,7 +243,7 @@ class CustomAlertDialog extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // Header (no scrolleable)
+          
           Container(
             height: 90,
             decoration: BoxDecoration(
@@ -256,13 +256,13 @@ class CustomAlertDialog extends StatelessWidget {
             child: Center(child: headerContent),
           ),
           
-          // Contenido (scrolleable)
+          
           Flexible(
             child: SingleChildScrollView(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  // Título y mensaje
+                  
                   if (title.isNotEmpty || message.isNotEmpty)
                     Padding(
                       padding: const EdgeInsets.all(16.0),
@@ -277,7 +277,7 @@ class CustomAlertDialog extends StatelessWidget {
                                     ? AdminColors.successColor
                                     : type == CustomAlertType.error
                                         ? AdminColors.errorColor
-                                        : AdminColors.textSecondaryColoralert, // Changed from textTertiaryColor
+                                        : AdminColors.textSecondaryColoralert, 
                               ),
                               textAlign: TextAlign.center,
                             ),
@@ -293,7 +293,7 @@ class CustomAlertDialog extends StatelessWidget {
                       ),
                     ),
                     
-                  // Widget personalizado
+                    
                   if (customWidget != null)
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -304,7 +304,6 @@ class CustomAlertDialog extends StatelessWidget {
             ),
           ),
           
-          // Botones (no scrolleable)
           if ((confirmText.isNotEmpty || cancelText?.isNotEmpty == true) &&
               customWidget == null)
             Container(
@@ -317,7 +316,7 @@ class CustomAlertDialog extends StatelessWidget {
   }
 
   Widget _buildButtons(BuildContext context) {
-    // Determinar el color del botón según el tipo de alerta
+    
     final buttonColor = type == CustomAlertType.error
         ? AdminColors.errorColor 
         : type == CustomAlertType.success
@@ -399,7 +398,6 @@ class _AnimatedGearsState extends State<AnimatedGears>
       end: math.pi * 2,
     ).animate(_gearController);
 
-    // El segundo engranaje gira en dirección opuesta
     _gear2Rotation = Tween<double>(
       begin: 0,
       end: -math.pi * 2,
@@ -411,7 +409,7 @@ class _AnimatedGearsState extends State<AnimatedGears>
     return Stack(
       alignment: Alignment.center,
       children: [
-        // Engranaje grande
+        
         AnimatedBuilder(
           animation: _gear1Rotation,
           builder: (context, child) {
@@ -425,7 +423,6 @@ class _AnimatedGearsState extends State<AnimatedGears>
             );
           },
         ),
-        // Engranaje pequeño
         Positioned(
           top: -5,
           right: -5,
@@ -443,7 +440,6 @@ class _AnimatedGearsState extends State<AnimatedGears>
             },
           ),
         ),
-        // Partículas de trabajo
         ..._buildWorkParticles(),
       ],
     );
@@ -542,9 +538,9 @@ class _AnimatedScanningWavesState extends State<AnimatedScanningWaves>
     return Stack(
       alignment: Alignment.center,
       children: [
-        // Ondas expansivas
+      
         ...List.generate(3, (index) => _buildWave(index)),
-        // Ícono central de radar/búsqueda
+       
         AnimatedBuilder(
           animation: _scanController,
           builder: (context, child) {
@@ -921,10 +917,10 @@ class _AnimatedSuccessCheckState extends State<AnimatedSuccessCheck>
       child: Stack(
         alignment: Alignment.center,
         children: [
-          // Partículas
+          
           ..._buildParticles(),
           
-          // Círculo principal
+          
           AnimatedBuilder(
             animation: _scaleAnimation,
             builder: (context, child) {
@@ -949,7 +945,7 @@ class _AnimatedSuccessCheckState extends State<AnimatedSuccessCheck>
             },
           ),
           
-          // Check mark
+          
           AnimatedBuilder(
             animation: _checkAnimation,
             builder: (context, child) {

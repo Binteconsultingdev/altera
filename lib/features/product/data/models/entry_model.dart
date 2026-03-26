@@ -1,6 +1,5 @@
 import 'package:altera/features/product/domain/entities/getEntryEntity/get_entry_entity.dart';
 
-// 6. EntryModel actualizado
 class EntryModel extends EntryEntity {
   EntryModel({
     required int id,

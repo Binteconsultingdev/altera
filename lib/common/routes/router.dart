@@ -20,7 +20,6 @@ class AppPages {
     GetPage(
       name: RoutesNames.homePage, 
       page: () {
-        // Obtener el índice inicial de los argumentos (si existe)
         final int? initialIndex = Get.arguments as int?;
         return HomePage(initialIndex: initialIndex);
       },

@@ -48,13 +48,11 @@ class _AnimatedSuccessCheckState extends State<AnimatedSuccessCheck>
       curve: Curves.easeOutCubic,
     );
 
-    // Animación de partículas
     _particlesController = AnimationController(
       duration: const Duration(milliseconds: 1000),
       vsync: this,
     );
 
-    // Animación de escala para efecto de rebote
     _scaleAnimation = TweenSequence<double>([
       TweenSequenceItem(
         tween: Tween<double>(begin: 0.0, end: 1.1)
@@ -105,10 +103,8 @@ class _AnimatedSuccessCheckState extends State<AnimatedSuccessCheck>
       child: Stack(
         alignment: Alignment.center,
         children: [
-          // Partículas
           ..._buildParticles(),
           
-          // Círculo principal
           AnimatedBuilder(
             animation: _scaleAnimation,
             builder: (context, child) {
@@ -133,7 +129,6 @@ class _AnimatedSuccessCheckState extends State<AnimatedSuccessCheck>
             },
           ),
           
-          // Check mark
           AnimatedBuilder(
             animation: _checkAnimation,
             builder: (context, child) {
