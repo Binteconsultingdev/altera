@@ -130,7 +130,7 @@ class QRScannerWidget extends StatelessWidget {
                           scannerController.onQRCodeDetected(qrData);
                         }
                       },
-                      errorBuilder: (context, error, child) {
+                      errorBuilder: (context, error)  {
                         return Container(
                           color: Colors.black,
                           child: Center(
