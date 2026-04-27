@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'dart:ui';
 
 import 'package:get/get.dart';
+import 'package:url_launcher/url_launcher.dart'; 
 
 class PerfilScreen extends StatefulWidget {
   const PerfilScreen({
@@ -251,13 +252,77 @@ class _PerfilScreenState extends State<PerfilScreen> {
             _buildInfoItem(Icons.email_outlined, "Correo", controller.userEmail),
             _buildInfoItem(Icons.admin_panel_settings_outlined, "Rol", controller.userRole),
             _buildInfoItem(Icons.warehouse, "Almacén", controller.almacenNombre),
-
+_buildPrivacyItem(),
           ],
         )),
       ],
     );
   }
+Widget _buildPrivacyItem() {
+  final Color textColor = AdminColors.textPrimaryColor;
+  final Color secondaryColor = AdminColors.textSecondaryColor;
+  final Color iconBgColor = Colors.white.withOpacity(0.1);
 
+  return GestureDetector(
+    onTap: () async {
+      final Uri url = Uri.parse('https://binteconsulting.com/altera/aviso-de-privacidad.html');
+      if (await canLaunchUrl(url)) {
+        await launchUrl(url, mode: LaunchMode.externalApplication);
+      }
+    },
+    child: Padding(
+      padding: const EdgeInsets.only(bottom: 16.0),
+      child: Row(
+        children: [
+          Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              color: iconBgColor,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(
+              Icons.privacy_tip_outlined,
+              color: textColor,
+              size: 20,
+            ),
+          ),
+          SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "Legal",
+                  style: TextStyle(
+                    color: secondaryColor,
+                    fontSize: 12,
+                    fontFamily: 'Roboto',
+                  ),
+                ),
+                SizedBox(height: 4),
+                Text(
+                  "Aviso de privacidad",
+                  style: TextStyle(
+                    color: textColor,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 16,
+                    fontFamily: 'Roboto',
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Icon(
+            Icons.open_in_new,
+            color: secondaryColor,
+            size: 16,
+          ),
+        ],
+      ),
+    ),
+  );
+}
   Widget _buildInfoItem(IconData icon, String label, String value) {
     final Color textColor = AdminColors.textPrimaryColor;
     final Color secondaryColor = AdminColors.textSecondaryColor;
